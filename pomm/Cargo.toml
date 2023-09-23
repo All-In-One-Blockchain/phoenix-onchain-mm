@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.66"
-clap = { version = "4.0.26", features = ["derive"] }
 shellexpand = "2.1.2"
 solana-sdk = "1.10.32"
 solana-client = "1.10.32"
@@ -31,3 +30,4 @@ anchor-lang = "0.26.0"
 spl-token = { version = "3.2.0", features = ["no-entrypoint"] }
 spl-associated-token-account = { version = "1.1.1", features = [ "no-entrypoint" ] }
 bs58 = "0.5.0"
+structopt = "0.3.26"

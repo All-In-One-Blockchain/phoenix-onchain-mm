@@ -1,7 +1,6 @@
 use anchor_lang::InstructionData;
 use anchor_lang::ToAccountMetas;
 use anyhow::anyhow;
-use clap::Parser;
 use phoenix::program::get_seat_address;
 use phoenix::program::get_vault_address;
 use phoenix::program::MarketHeader;
@@ -17,6 +16,37 @@ use solana_sdk::signer::keypair::Keypair;
 use solana_sdk::signer::Signer;
 use spl_associated_token_account::get_associated_token_address;
 use std::str::FromStr;
+use structopt::StructOpt;
+
+#[derive(Debug, StructOpt)]
+#[structopt(name = "phoneix-mm-cli")]
+pub struct PhoneixOnChainMMCli {
+    /// Optionally include your keypair path. Defaults to your Solana CLI config file.
+    #[structopt(global = true, short, long)]
+    keypair_path: Option<String>,
+    /// Optionally include your RPC endpoint. Use "local", "dev", "main" for default endpoints. Defaults to your Solana CLI config file.
+    #[structopt(global = true, short, long)]
+    url: Option<String>,
+    /// Optionally include a commitment level. Defaults to your Solana CLI config file.
+    #[structopt(global = true, short, long)]
+    commitment: Option<String>,
+    /// Market pubkey to provide on
+    market: Pubkey,
+    // The ticker is used to pull the price from the Coinbase API, and therefore should conform to the Coinbase ticker format.
+    /// Note that for all USDC quoted markets, the price feed should use "USD" instead of "USDC".
+    #[structopt(short, long, default_value = "SOL-USD")]
+    ticker: String,
+    #[structopt(long, default_value = "2000")]
+    quote_refresh_frequency_in_ms: u64,
+    #[structopt(long, default_value = "3")]
+    quote_edge_in_bps: u64,
+    #[structopt(long, default_value = "100000000")]
+    quote_size: u64,
+    #[structopt(long, default_value = "ignore")]
+    price_improvement_behavior: String,
+    #[structopt(long, default_value = "true", parse(try_from_str))]
+    post_only: bool,
+}
 
 pub fn get_network(network_str: &str) -> &str {
     match network_str {
@@ -31,36 +61,6 @@ pub fn get_payer_keypair_from_path(path: &str) -> anyhow::Result<Keypair> {
     read_keypair_file(&*shellexpand::tilde(path)).map_err(|e| anyhow!(e.to_string()))
 }
 
-#[derive(Parser, Debug)]
-#[clap(version, about)]
-struct Arguments {
-    /// Optionally include your keypair path. Defaults to your Solana CLI config file.
-    #[clap(global = true, short, long)]
-    keypair_path: Option<String>,
-    /// Optionally include your RPC endpoint. Use "local", "dev", "main" for default endpoints. Defaults to your Solana CLI config file.
-    #[clap(global = true, short, long)]
-    url: Option<String>,
-    /// Optionally include a commitment level. Defaults to your Solana CLI config file.
-    #[clap(global = true, short, long)]
-    commitment: Option<String>,
-    /// Market pubkey to provide on
-    market: Pubkey,
-    // The ticker is used to pull the price from the Coinbase API, and therefore should conform to the Coinbase ticker format.
-    /// Note that for all USDC quoted markets, the price feed should use "USD" instead of "USDC".
-    #[clap(short, long, default_value = "SOL-USD")]
-    ticker: String,
-    #[clap(long, default_value = "2000")]
-    quote_refresh_frequency_in_ms: u64,
-    #[clap(long, default_value = "3")]
-    quote_edge_in_bps: u64,
-    #[clap(long, default_value = "100000000")]
-    quote_size: u64,
-    #[clap(long, default_value = "ignore")]
-    price_improvement_behavior: String,
-    #[clap(long, default_value = "true")]
-    post_only: bool,
-}
-
 #[derive(Debug, Clone, Copy, Default)]
 pub struct FaucetMetadata {
     pub spec_pubkey: Pubkey,
@@ -71,7 +71,8 @@ pub struct FaucetMetadata {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let cli = Arguments::parse();
+    let opt = PhoneixOnChainMMCli::from_args();
+
     let config = match CONFIG_FILE.as_ref() {
         Some(config_file) => Config::load(config_file).unwrap_or_else(|_| {
             println!("Failed to load config file: {}", config_file);
@@ -80,14 +81,14 @@ async fn main() -> anyhow::Result<()> {
         None => Config::default(),
     };
     let commitment =
-        ConfigInput::compute_commitment_config("", &cli.commitment.unwrap_or(config.commitment)).1;
-    let payer = get_payer_keypair_from_path(&cli.keypair_path.unwrap_or(config.keypair_path))?;
-    let network_url = &get_network(&cli.url.unwrap_or(config.json_rpc_url)).to_string();
+        ConfigInput::compute_commitment_config("", &opt.commitment.unwrap_or(config.commitment)).1;
+    let payer = get_payer_keypair_from_path(&opt.keypair_path.unwrap_or(config.keypair_path))?;
+    let network_url = &get_network(&opt.url.unwrap_or(config.json_rpc_url)).to_string();
     let client = RpcClient::new_with_commitment(network_url.to_string(), commitment);
 
     let sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, network_url).await?;
 
-    let Arguments {
+    let PhoneixOnChainMMCli {
         market,
         ticker,
         quote_edge_in_bps,
@@ -96,7 +97,7 @@ async fn main() -> anyhow::Result<()> {
         price_improvement_behavior,
         post_only,
         ..
-    } = cli;
+    } = opt;
 
     let maker_setup_instructions = sdk.get_maker_setup_instructions_for_market(&market).await?;
     sdk.client
