@@ -17,8 +17,6 @@ pub struct FaucetMetadata {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let opt = PhoneixOnChainMMCli::from_args();
-    let result = opt.get_config_path()?;
-    dbg!(&result);
+    let _opt = PhoneixOnChainMMCli::from_args();
     Ok(())
 }

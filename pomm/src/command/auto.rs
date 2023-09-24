@@ -1,17 +1,16 @@
+use crate::config::Config as PhoenixConfig;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
-use crate::config::Config as PhoenixConfig;
 #[derive(Debug, StructOpt)]
-#[structopt(name = "pomm")]
-pub struct PhoneixOnChainMMCli {
+pub struct Auto {
     /// config path for Phoenix onchain Maket Maker
     #[structopt(short, long)]
     config_path: Option<PathBuf>,
 }
 
-impl PhoneixOnChainMMCli {
-    pub fn get_config_path(&self) -> anyhow::Result<PathBuf> {
+impl Auto {
+    pub fn run(&self) -> anyhow::Result<PathBuf> {
         if let Some(config_path) = self.config_path.clone() {
             println!("enpter input config file");
             let config_str = std::fs::read_to_string(config_path.clone())?;
@@ -31,21 +30,21 @@ impl PhoneixOnChainMMCli {
                 std::fs::write(
                     config_path.clone(),
                     r#"
-# Optionally include your keypair path. Defaults to your Solana CLI config file.
-keypair_path = "/home/davirain/.config/solana/id.json"
-# Optionally include your RPC endpoint. Use "local", "dev", "main" for default endpoints. Defaults to your Solana CLI config file.
-rpc_endpoint = "https://api.devnet.solana.com"
-# Optionally include a commitment level. Defaults to your Solana CLI config file.
-commitment = "confirmed"
+    # Optionally include your keypair path. Defaults to your Solana CLI config file.
+    keypair_path = "/home/davirain/.config/solana/id.json"
+    # Optionally include your RPC endpoint. Use "local", "dev", "main" for default endpoints. Defaults to your Solana CLI config file.
+    rpc_endpoint = "https://api.devnet.solana.com"
+    # Optionally include a commitment level. Defaults to your Solana CLI config file.
+    commitment = "confirmed"
 
-[phoenix]
-market = "78ehDnHgbkFxqXZwdFxa8HK7saX58GymeX2wNGdkqYLp"
-ticker = "SOL-USD"
-quote_refresh_frequency_in_ms = 2000
-quote_edge_in_bps = 3
-quote_size = 100000000
-price_improvement_behavior = "ignore"
-post_only = true"#,
+    [phoenix]
+    market = "78ehDnHgbkFxqXZwdFxa8HK7saX58GymeX2wNGdkqYLp"
+    ticker = "SOL-USD"
+    quote_refresh_frequency_in_ms = 2000
+    quote_edge_in_bps = 3
+    quote_size = 100000000
+    price_improvement_behavior = "ignore"
+    post_only = true"#,
                 )?;
                 let config_str = std::fs::read_to_string(config_path.clone())?;
                 toml::from_str::<PhoenixConfig>(&config_str)?;
