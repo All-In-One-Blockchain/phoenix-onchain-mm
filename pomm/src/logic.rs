@@ -4,6 +4,7 @@ use anchor_lang::ToAccountMetas;
 use phoenix::program::get_seat_address;
 use phoenix::program::get_vault_address;
 use phoenix::program::MarketHeader;
+use phoenix::state::Side;
 use phoenix_onchain_mm::accounts::{
     Initialize as InitializeAccounts, UpdateQuotes as UpdateQuotesAccounts,
 };
@@ -95,6 +96,20 @@ pub async fn run(phoneix_config: PhoenixConfig) -> anyhow::Result<()> {
         );
         let txid = client.send_and_confirm_transaction(&transaction).await?;
         println!("Creating strategy account: {}", txid);
+
+        // - Create the associated token account, if needed, for both base and quote tokens
+        // - Claim a seat on the market, if needed
+        let set_claim_marke_ix = sdk.get_maker_setup_instructions_for_market(&market).await?;
+
+        let sig = sdk
+            .client
+            .sign_send_instructions(set_claim_marke_ix, vec![])
+            .await?;
+
+        println!(
+            "Link to view transaction: https://beta.solscan.io/tx/{}?cluster=devnet",
+            sig
+        );
     }
 
     let data = client.get_account_data(&market).await?;
