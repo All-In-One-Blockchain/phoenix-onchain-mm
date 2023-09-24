@@ -13,7 +13,11 @@ use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signer::Signer;
 use solana_sdk::transaction::Transaction;
 use spl_associated_token_account::get_associated_token_address;
+use std::io;
+use std::io::Write;
 use structopt::StructOpt;
+use tokio::time::sleep;
+use tokio::time::Duration;
 
 #[derive(Debug, StructOpt)]
 pub struct ListenBalance {}
@@ -58,6 +62,8 @@ impl ListenBalance {
             base_start_balance, quote_start_balance
         );
 
+        io::stdout().flush()?; // 刷新标准输出缓冲区
+
         loop {
             let quote_balance = client
                 .get_token_account_balance(&quote_token_account)
@@ -70,9 +76,14 @@ impl ListenBalance {
                 .ui_amount_string;
 
             println!(
-                "\rCurrent Base Balance: {}, Current Quote Balance: {}",
+                "\tCurrent Base Balance: {}, Current Quote Balance: {}",
                 base_balance, quote_balance
             );
+
+            io::stdout().flush()?; // 刷新标准输出缓冲区
+
+            // 休眠一段时间，以控制更新速度
+            sleep(Duration::from_secs(1)).await;
         }
     }
 }

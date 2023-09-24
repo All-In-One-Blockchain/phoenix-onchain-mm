@@ -26,6 +26,9 @@ pub enum Command {
     /// cancle all orders
     #[structopt(name = "cancle")]
     Cancle(Cancle),
+    /// listen balance
+    #[structopt(name = "listen-balance")]
+    ListenBalance(ListenBalance),
 }
 
 #[derive(Debug, StructOpt)]
@@ -46,6 +49,7 @@ impl PhoneixOnChainMMCli {
             Command::Initialize(initialize) => initialize.run().await,
             Command::UpdateQuotes(update_quotes) => update_quotes.run().await,
             Command::Cancle(cancle) => cancle.run().await,
+            Command::ListenBalance(listen_balance) => listen_balance.run().await,
         }
     }
 }

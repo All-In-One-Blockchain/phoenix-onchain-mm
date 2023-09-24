@@ -43,9 +43,9 @@ async fn time_task() -> anyhow::Result<()> {
     let (commitment, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
     let client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
 
-    let mut sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint).await?;
+    let mut _sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint).await?;
 
-    let PhoenixOnChainMMConfig { market, .. } = phoneix_config.phoenix;
+    let PhoenixOnChainMMConfig { market: _, .. } = phoneix_config.phoenix;
 
     let data = client
         .get_account_data(&phoneix_config.phoenix.market)
@@ -79,12 +79,12 @@ async fn time_task() -> anyhow::Result<()> {
         let base_token_account =
             get_associated_token_address(&payer.pubkey(), &header.base_params.mint_key);
 
-        let quote_start_balance = client
+        let _quote_start_balance = client
             .get_token_account_balance(&quote_token_account)
             .await?
             .ui_amount_string;
 
-        let base_start_balance = client
+        let _base_start_balance = client
             .get_token_account_balance(&base_token_account)
             .await?
             .ui_amount_string;

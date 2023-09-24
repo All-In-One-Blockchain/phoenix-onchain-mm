@@ -23,7 +23,7 @@ reqwest = "0.11.14"
 bincode = "1.3.3"
 phoenix-onchain-mm = { version = "0.1.0", path = "../programs/phoenix-onchain-mm", features = ["no-entrypoint"] }
 phoenix-v1 = { version = "=0.2.3", features = ["no-entrypoint"] }
-phoenix-sdk = "=0.4.2"
+phoenix-sdk = "0.4.2"
 yellowstone-grpc-client = "=1.1.1+solana.1.15.2"
 yellowstone-grpc-proto = "=1.1.0+solana.1.15.2"
 anchor-lang = "0.26.0"
@@ -33,6 +33,3 @@ bs58 = "0.5.0"
 structopt = "0.3.26"
 toml = "0.8.0"
 dirs = "5.0.1"
-
-phoenix-sdk-core = "=0.4.2"
-ellipsis-client = "=0.2.0"

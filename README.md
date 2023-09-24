@@ -32,3 +32,11 @@ SUBCOMMANDS:
     init             initialize Phoenix onchain Maket Maker and Claim Market Sate
     update-quotes    update quotes
 ```
+
+
+## env requirement
+
+- anchor-cli 0.26.0
+    - use avm install 0.26.0
+- solana-cli 1.14.14
+    - use solana-install init 1.14.14

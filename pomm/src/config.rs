@@ -40,12 +40,8 @@ impl Config {
                 (config.commitment, config.keypair_path, config.json_rpc_url)
             };
         let commitment = ConfigInput::compute_commitment_config("", &commitment).1;
-        dbg!(&commitment);
-        dbg!(&keypair_path);
         let payer = get_payer_keypair_from_path(&keypair_path)?;
-        dbg!(&payer);
         let network_url = get_network(&rpc_enpoint).to_string();
-        dbg!(&network_url);
         Ok((commitment, payer, network_url))
     }
 }
