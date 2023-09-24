@@ -20,11 +20,10 @@ impl Initialize {
     // TODO: check have cliam sate
     pub async fn run(&self) -> anyhow::Result<()> {
         let phoneix_config = get_pomm_config()?;
+        dbg!(&phoneix_config);
 
         let (commitment, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
         let client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
-
-        let sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint).await?;
 
         let PhoenixOnChainMMConfig {
             market,
@@ -40,6 +39,7 @@ impl Initialize {
             &[b"phoenix", payer.pubkey().as_ref(), market.as_ref()],
             &phoenix_onchain_mm::id(),
         );
+        dbg!(&strategy_key);
 
         let price_improvement = match price_improvement_behavior.as_str() {
             "Join" | "join" => PriceImprovementBehavior::Join,
@@ -47,6 +47,7 @@ impl Initialize {
             "Ignore" | "ignore" => PriceImprovementBehavior::Ignore,
             _ => PriceImprovementBehavior::Join,
         };
+        dbg!(price_improvement);
 
         let params = StrategyParams {
             quote_edge_in_bps: Some(quote_edge_in_bps),
@@ -54,6 +55,7 @@ impl Initialize {
             price_improvement_behavior: Some(price_improvement),
             post_only: Some(post_only),
         };
+        dbg!(&params);
 
         let initialize_data = InitializeInstruction { params };
         let initialize_accounts = InitializeAccounts {
@@ -75,7 +77,9 @@ impl Initialize {
             &[&payer],
             client.get_latest_blockhash().await?,
         );
+        dbg!(&transaction);
         let txid = client.send_and_confirm_transaction(&transaction).await?;
+        dbg!(&txid);
 
         println!(
             "Creating strategy account: https://beta.solscan.io/tx/{}?cluster=devnet",

@@ -3,16 +3,21 @@ use anchor_lang::prelude::*;
 // An enum for custom error codes
 #[error_code]
 pub enum StrategyError {
+    #[msg("no return data")]
     NoReturnData,
+    #[msg("invalid strategy params")]
     InvalidStrategyParams,
+    #[msg("edge must be non-zero")]
     EdgeMustBeNonZero,
+    #[msg("invalid phoenix program")]
     InvalidPhoenixProgram,
+    #[msg("failed to deserialize phoenix market")]
     FailedToDeserializePhoenixMarket,
-    #[msg("You are not authorized to perform this action.")]
+    #[msg("unauthorized")]
     Unauthorized,
-    #[msg("The config has already been initialized.")]
+    #[msg("re-initialize")]
     ReInitialize,
-    #[msg("The config has not been initialized.")]
+    #[msg("un-initialize")]
     UnInitialize,
     #[msg("Argument is invalid.")]
     InvalidArgument,
@@ -26,8 +31,12 @@ pub enum StrategyError {
     LoanValueTooHigh,
     #[msg("Program should not try to serialize a price account.")]
     TryToSerializePriceAccount,
+    #[msg("pyth valid slot")]
     PythValidSlot,
+    #[msg("pyth status")]
     PythStatus,
+    #[msg("pyth negative price")]
     PythNegativePrice,
+    #[msg("pyth confidence")]
     PythConfidence,
 }

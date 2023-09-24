@@ -40,8 +40,12 @@ impl Config {
                 (config.commitment, config.keypair_path, config.json_rpc_url)
             };
         let commitment = ConfigInput::compute_commitment_config("", &commitment).1;
+        dbg!(&commitment);
+        dbg!(&keypair_path);
         let payer = get_payer_keypair_from_path(&keypair_path)?;
+        dbg!(&payer);
         let network_url = get_network(&rpc_enpoint).to_string();
+        dbg!(&network_url);
         Ok((commitment, payer, network_url))
     }
 }
@@ -83,7 +87,7 @@ pub fn get_network(network_str: &str) -> &str {
 }
 
 pub fn get_payer_keypair_from_path(path: &str) -> anyhow::Result<Keypair> {
-    read_keypair_file(&*shellexpand::tilde(path)).map_err(|e| anyhow!(e.to_string()))
+    read_keypair_file(path).map_err(|e| anyhow!(e.to_string()))
 }
 
 #[test]
