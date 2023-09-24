@@ -11,7 +11,7 @@ pub mod state;
 
 pub use instructions::*;
 
-declare_id!("H8d3LKBEHEoMacBJwHGiermoW3KtRAw3cQa85HfBSyYz");
+declare_id!("CjNsMEpv3TJ6QLq9SLQS7sb7VFMP48BMCy4MwvWeNNwJ");
 
 #[program]
 pub mod phoenix_onchain_mm {
