@@ -18,6 +18,8 @@ use spl_associated_token_account::get_associated_token_address;
 use std::str::FromStr;
 use structopt::StructOpt;
 
+pub mod config;
+
 #[derive(Debug, StructOpt)]
 #[structopt(name = "phoneix-mm-cli")]
 pub struct PhoneixOnChainMMCli {
