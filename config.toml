@@ -6,8 +6,8 @@ rpc_endpoint = "https://api.devnet.solana.com"
 commitment = "confirmed"
 
 [phoenix]
-market = "78ehDnHgbkFxqXZwdFxa8HK7saX58GymeX2wNGdkqYLp"
-ticker = "SOL-USD"
+market = "CS2H8nbAVVEUHWPF5extCSymqheQdkd4d7thik6eet9N"
+ticker = "SOL-USDC"
 quote_refresh_frequency_in_ms = 2000
 quote_edge_in_bps = 3
 quote_size = 100000000

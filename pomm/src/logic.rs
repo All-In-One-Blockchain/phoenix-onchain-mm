@@ -3,6 +3,12 @@ use anchor_lang::ToAccountMetas;
 use phoenix::program::get_seat_address;
 use phoenix::program::get_vault_address;
 use phoenix::program::MarketHeader;
+use phoenix_onchain_mm::accounts::{
+    Initialize as InitializeAccounts, UpdateQuotes as UpdateQuotesAccounts,
+};
+use phoenix_onchain_mm::instruction::{
+    Initialize as InitializeInstruction, UpdateQuotes as UpdateQuotesInstruction,
+};
 use phoenix_onchain_mm::OrderParams;
 use phoenix_onchain_mm::PriceImprovementBehavior;
 use phoenix_onchain_mm::StrategyParams;
@@ -10,6 +16,7 @@ use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_sdk::instruction::Instruction;
 use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signer::Signer;
+use solana_sdk::transaction::Transaction;
 use spl_associated_token_account::get_associated_token_address;
 use std::str::FromStr;
 
@@ -68,8 +75,8 @@ pub async fn run(phoneix_config: PhoenixConfig) -> anyhow::Result<()> {
         post_only: Some(post_only),
     };
     if create {
-        let initialize_data = phoenix_onchain_mm::instruction::Initialize { params };
-        let initialize_accounts = phoenix_onchain_mm::accounts::Initialize {
+        let initialize_data = InitializeInstruction { params };
+        let initialize_accounts = InitializeAccounts {
             phoenix_strategy: strategy_key,
             market,
             user: payer.pubkey(),
@@ -82,7 +89,7 @@ pub async fn run(phoneix_config: PhoenixConfig) -> anyhow::Result<()> {
             data: initialize_data.data(),
         };
 
-        let transaction = solana_sdk::transaction::Transaction::new_signed_with_payer(
+        let transaction = Transaction::new_signed_with_payer(
             &[ix],
             Some(&payer.pubkey()),
             &[&payer],
@@ -114,14 +121,14 @@ pub async fn run(phoneix_config: PhoenixConfig) -> anyhow::Result<()> {
 
         println!("Fair price: {}", fair_price);
 
-        let args = phoenix_onchain_mm::instruction::UpdateQuotes {
+        let args = UpdateQuotesInstruction {
             params: OrderParams {
                 fair_price_in_quote_atoms_per_raw_base_unit: (fair_price * 1e6) as u64,
                 strategy_params: params,
             },
         };
 
-        let accounts = phoenix_onchain_mm::accounts::UpdateQuotes {
+        let accounts = UpdateQuotesAccounts {
             phoenix_strategy: strategy_key,
             market,
             user: payer.pubkey(),
@@ -147,7 +154,7 @@ pub async fn run(phoneix_config: PhoenixConfig) -> anyhow::Result<()> {
             data: args.data(),
         };
 
-        let transaction = solana_sdk::transaction::Transaction::new_signed_with_payer(
+        let transaction = Transaction::new_signed_with_payer(
             &[ix],
             Some(&payer.pubkey()),
             &[&payer],
