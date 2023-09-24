@@ -17,6 +17,7 @@ use structopt::StructOpt;
 pub struct Initialize {}
 
 impl Initialize {
+    // TODO: check have cliam sate
     pub async fn run(&self) -> anyhow::Result<()> {
         let phoneix_config = get_pomm_config()?;
 
