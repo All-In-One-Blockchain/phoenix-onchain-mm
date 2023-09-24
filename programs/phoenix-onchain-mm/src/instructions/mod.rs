@@ -35,9 +35,6 @@ impl PriceImprovementBehavior {
 
 #[derive(Debug, AnchorDeserialize, AnchorSerialize, Clone, Copy)]
 pub struct OrderParams {
-    // TODO: replace to oracle price
-    //
-    pub fair_price_in_quote_atoms_per_raw_base_unit: u64,
     pub strategy_params: StrategyParams,
 }
 

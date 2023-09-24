@@ -9,7 +9,9 @@ use phoenix::{
 };
 
 use super::{OrderParams, PriceImprovementBehavior};
+use crate::constant::{BASE, BIG_NUMBER};
 use crate::errors::StrategyError;
+use crate::oracle::Price;
 use crate::phoenix_v1::*;
 use crate::state::PhoenixStrategyState;
 
@@ -62,18 +64,37 @@ pub fn update_quotes_instruction(ctx: Context<UpdateQuotes>, params: OrderParams
         })?
         .inner;
 
-    // Compute quote prices
-    let mut bid_price_in_ticks = get_bid_price_in_ticks(
-        params.fair_price_in_quote_atoms_per_raw_base_unit,
-        &header,
-        phoenix_strategy.quote_edge_in_bps,
+    msg!("Using oracle to calculate the fair price");
+    let pyth_account = &ctx.remaining_accounts[0];
+    let oracle_price = Price::load(pyth_account)?;
+    msg!(
+        "oracle price = {}, oracle expo = {}",
+        oracle_price.price,
+        oracle_price.expo
+    );
+    // calculating the price by multiplying oracle price on 10^6 and dividing it on 10^expo
+    let base_fair_price = BIG_NUMBER * oracle_price.price as u128
+        / (u64::pow(BASE, (-oracle_price.expo) as u32) as u128);
+
+    let pyth_account = &ctx.remaining_accounts[1];
+    let oracle_price = Price::load(pyth_account)?;
+
+    let quote_fair_price = BIG_NUMBER * oracle_price.price as u128
+        / (u64::pow(BASE, (-oracle_price.expo) as u32) as u128);
+    msg!(
+        "Base price = {}, quote price = {}",
+        base_fair_price,
+        quote_fair_price
     );
 
-    let mut ask_price_in_ticks = get_ask_price_in_ticks(
-        params.fair_price_in_quote_atoms_per_raw_base_unit,
-        &header,
-        phoenix_strategy.quote_edge_in_bps,
-    );
+    let fair_price_in_ticks = get_fair_price_in_ticks(base_fair_price, quote_fair_price, &header);
+
+    // Compute quote prices
+    let mut bid_price_in_ticks =
+        get_bid_price_in_ticks(fair_price_in_ticks, phoenix_strategy.quote_edge_in_bps);
+
+    let mut ask_price_in_ticks =
+        get_ask_price_in_ticks(fair_price_in_ticks, phoenix_strategy.quote_edge_in_bps);
 
     // Returns the best bid and ask prices that are not placed by the trader
     let trader_index = market.get_trader_index(&user.key()).unwrap_or(u32::MAX) as u64;

@@ -1,3 +1,4 @@
+use crate::config::{Config as PhoenixConfig, PhoenixOnChainMMConfig};
 use anchor_lang::InstructionData;
 use anchor_lang::ToAccountMetas;
 use phoenix::program::get_seat_address;
@@ -18,9 +19,6 @@ use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signer::Signer;
 use solana_sdk::transaction::Transaction;
 use spl_associated_token_account::get_associated_token_address;
-use std::str::FromStr;
-
-use crate::config::{Config as PhoenixConfig, PhoenixOnChainMMConfig};
 
 pub async fn run(phoneix_config: PhoenixConfig) -> anyhow::Result<()> {
     let (commitment, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
@@ -30,7 +28,7 @@ pub async fn run(phoneix_config: PhoenixConfig) -> anyhow::Result<()> {
 
     let PhoenixOnChainMMConfig {
         market,
-        ticker,
+        ticker: _,
         quote_edge_in_bps,
         quote_size,
         quote_refresh_frequency_in_ms,
@@ -107,23 +105,8 @@ pub async fn run(phoneix_config: PhoenixConfig) -> anyhow::Result<()> {
     println!("Quote Params: {:#?}", params);
 
     loop {
-        let fair_price = {
-            let response = reqwest::get(format!(
-                "https://api.coinbase.com/v2/prices/{}/spot",
-                ticker
-            ))
-            .await?
-            .json::<serde_json::Value>()
-            .await?;
-
-            f64::from_str(response["data"]["amount"].as_str().unwrap())?
-        };
-
-        println!("Fair price: {}", fair_price);
-
         let args = UpdateQuotesInstruction {
             params: OrderParams {
-                fair_price_in_quote_atoms_per_raw_base_unit: (fair_price * 1e6) as u64,
                 strategy_params: params,
             },
         };

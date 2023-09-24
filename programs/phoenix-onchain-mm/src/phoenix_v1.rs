@@ -89,32 +89,17 @@ pub fn get_best_bid_and_ask(
     (best_bid, best_ask)
 }
 
-pub fn get_bid_price_in_ticks(
-    fair_price_in_quote_atoms_per_raw_base_unit: u64,
-    header: &MarketHeader,
-    edge_in_bps: u64,
-) -> u64 {
-    let (fair_price_in_ticks, edge_in_ticks) = common_for_bid_and_ask_price_in_ticks(
-        fair_price_in_quote_atoms_per_raw_base_unit,
-        header,
-        edge_in_bps,
-    );
+pub fn get_bid_price_in_ticks(fair_price_in_ticks: u64, edge_in_bps: u64) -> u64 {
+    let edge_in_ticks = edge_in_bps * fair_price_in_ticks / 10_000;
     fair_price_in_ticks - edge_in_ticks
 }
 
-pub fn get_ask_price_in_ticks(
-    fair_price_in_quote_atoms_per_raw_base_unit: u64,
-    header: &MarketHeader,
-    edge_in_bps: u64,
-) -> u64 {
-    let (fair_price_in_ticks, edge_in_ticks) = common_for_bid_and_ask_price_in_ticks(
-        fair_price_in_quote_atoms_per_raw_base_unit,
-        header,
-        edge_in_bps,
-    );
+pub fn get_ask_price_in_ticks(fair_price_in_ticks: u64, edge_in_bps: u64) -> u64 {
+    let edge_in_ticks = edge_in_bps * fair_price_in_ticks / 10_000;
     fair_price_in_ticks + edge_in_ticks
 }
 
+#[allow(dead_code)]
 fn common_for_bid_and_ask_price_in_ticks(
     fair_price_in_quote_atoms_per_raw_base_unit: u64,
     header: &MarketHeader,
@@ -125,4 +110,14 @@ fn common_for_bid_and_ask_price_in_ticks(
         / header.get_tick_size_in_quote_atoms_per_base_unit().as_u64();
     let edge_in_ticks = edge_in_bps * fair_price_in_ticks / 10_000;
     (fair_price_in_ticks, edge_in_ticks)
+}
+
+pub fn get_fair_price_in_ticks(base_price: u128, quote_price: u128, header: &MarketHeader) -> u64 {
+    (base_price
+        * (u64::pow(10, header.quote_params.decimals) as u128)
+        * header.raw_base_units_per_base_unit as u128
+        / header
+            .get_tick_size_in_quote_atoms_per_base_unit()
+            .as_u128()
+        / quote_price) as u64
 }
