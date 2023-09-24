@@ -4,6 +4,7 @@ use anchor_lang::prelude::*;
 
 pub mod errors;
 pub mod instructions;
+pub mod oracle;
 pub mod phoenix_v1;
 pub mod state;
 
