@@ -3,7 +3,7 @@ use structopt::StructOpt;
 
 use crate::config::Config as PhoenixConfig;
 #[derive(Debug, StructOpt)]
-#[structopt(name = "phoneix-mm-cli")]
+#[structopt(name = "pomm")]
 pub struct PhoneixOnChainMMCli {
     config_path: Option<PathBuf>,
 }
