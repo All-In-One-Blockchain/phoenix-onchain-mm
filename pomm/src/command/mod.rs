@@ -1,10 +1,13 @@
 pub mod auto;
+pub mod cancle;
 pub mod initialize;
+pub mod update_quotes;
 
 use structopt::StructOpt;
 
 use auto::Auto;
 use initialize::Initialize;
+use update_quotes::UpdateQuotes;
 
 #[derive(Debug, StructOpt)]
 pub enum Command {
@@ -13,6 +16,8 @@ pub enum Command {
     Auto(Auto),
     /// initialize Phoenix onchain Maket Maker and Claim Market Sate
     Initialize(Initialize),
+    /// update quotes
+    UpdateQuotes(UpdateQuotes),
 }
 
 #[derive(Debug, StructOpt)]
@@ -31,6 +36,7 @@ impl PhoneixOnChainMMCli {
                 Ok(())
             }
             Command::Initialize(initialize) => initialize.run().await,
+            Command::UpdateQuotes(update_quotes) => update_quotes.run().await,
         }
     }
 }
