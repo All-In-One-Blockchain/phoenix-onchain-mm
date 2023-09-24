@@ -11,6 +11,7 @@ use command::PhoneixOnChainMMCli;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let _opt = PhoneixOnChainMMCli::from_args();
+    let opt = PhoneixOnChainMMCli::from_args();
+    opt.run().await?;
     Ok(())
 }
