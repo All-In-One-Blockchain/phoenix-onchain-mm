@@ -12,3 +12,19 @@ while True:
   await market_maker.update_orders(price)
   time.sleep(SLEEP_DURATION)
 ```
+
+## Pomm usage
+
+```
+pomm 0.1.0
+
+USAGE:
+    pomm [OPTIONS]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -c, --config-path <config-path>    config path for Phoenix onchain Maket Maker
+```

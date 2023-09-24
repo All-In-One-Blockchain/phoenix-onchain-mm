@@ -5,16 +5,20 @@ use crate::config::Config as PhoenixConfig;
 #[derive(Debug, StructOpt)]
 #[structopt(name = "pomm")]
 pub struct PhoneixOnChainMMCli {
+    /// config path for Phoenix onchain Maket Maker
+    #[structopt(short, long)]
     config_path: Option<PathBuf>,
 }
 
 impl PhoneixOnChainMMCli {
     pub fn get_config_path(&self) -> anyhow::Result<PathBuf> {
         if let Some(config_path) = self.config_path.clone() {
+            println!("enpter input config file");
             let config_str = std::fs::read_to_string(config_path.clone())?;
             toml::from_str::<PhoenixConfig>(&config_str)?;
             Ok(config_path)
         } else {
+            println!("enpter not input config file");
             // open  config file path is  ~/.config/pomm/config.toml
             let home_path = dirs::home_dir().ok_or(anyhow::anyhow!("can't open home dir"))?;
             let pomm_config_path = home_path.join(".config").join("pomm");
