@@ -54,10 +54,25 @@ impl ListenBalance {
             .ui_amount_string;
 
         println!(
-            "Base Balance: {}, QuoteBalance: {}",
+            "Base Balance: {}, QuoteBalance: {}\n",
             base_start_balance, quote_start_balance
         );
 
-        Ok(())
+        loop {
+            let quote_balance = client
+                .get_token_account_balance(&quote_token_account)
+                .await?
+                .ui_amount_string;
+
+            let base_balance = client
+                .get_token_account_balance(&base_token_account)
+                .await?
+                .ui_amount_string;
+
+            println!(
+                "\rCurrent Base Balance: {}, Current Quote Balance: {}",
+                base_balance, quote_balance
+            );
+        }
     }
 }
