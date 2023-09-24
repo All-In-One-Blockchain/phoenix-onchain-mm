@@ -37,11 +37,10 @@ pub async fn run(phoneix_config: PhoenixConfig) -> anyhow::Result<()> {
         .await
         .unwrap();
 
-    let strategy_key = Pubkey::find_program_address(
+    let (strategy_key, _bump_seed) = Pubkey::find_program_address(
         &[b"phoenix", payer.pubkey().as_ref(), market.as_ref()],
         &phoenix_onchain_mm::id(),
-    )
-    .0;
+    );
 
     let mut create = false;
     match client.get_account(&strategy_key).await {
