@@ -1,18 +1,14 @@
 use anchor_lang::InstructionData;
 use anchor_lang::ToAccountMetas;
-use anyhow::anyhow;
 use phoenix::program::get_seat_address;
 use phoenix::program::get_vault_address;
 use phoenix::program::MarketHeader;
 use phoenix_onchain_mm::OrderParams;
 use phoenix_onchain_mm::PriceImprovementBehavior;
 use phoenix_onchain_mm::StrategyParams;
-use solana_cli_config::{Config, ConfigInput, CONFIG_FILE};
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_sdk::instruction::Instruction;
 use solana_sdk::pubkey::Pubkey;
-use solana_sdk::signature::read_keypair_file;
-use solana_sdk::signer::keypair::Keypair;
 use solana_sdk::signer::Signer;
 use spl_associated_token_account::get_associated_token_address;
 use std::str::FromStr;
@@ -24,19 +20,6 @@ use config::{Config as PhoenixConfig, PhoenixOnChainMMConfig};
 #[derive(Debug, StructOpt)]
 #[structopt(name = "phoneix-mm-cli")]
 pub struct PhoneixOnChainMMCli {}
-
-pub fn get_network(network_str: &str) -> &str {
-    match network_str {
-        "devnet" | "dev" | "d" => "https://api.devnet.solana.com",
-        "mainnet" | "main" | "m" | "mainnet-beta" => "https://api.mainnet-beta.solana.com",
-        "localnet" | "localhost" | "l" | "local" => "http://localhost:8899",
-        _ => network_str,
-    }
-}
-
-pub fn get_payer_keypair_from_path(path: &str) -> anyhow::Result<Keypair> {
-    read_keypair_file(&*shellexpand::tilde(path)).map_err(|e| anyhow!(e.to_string()))
-}
 
 #[derive(Debug, Clone, Copy, Default)]
 pub struct FaucetMetadata {
@@ -57,28 +40,11 @@ async fn main() -> anyhow::Result<()> {
     // 解析配置文件
     let config: PhoenixConfig = toml::from_str(&config_str).unwrap();
 
-    let (commitment, keypair_path, rpc_enpoint) =
-        if let (Some(commitment), Some(keypair_path), Some(rpc_endpoint)) =
-            (config.commitment, config.keypair_path, config.rpc_endpoint)
-        {
-            (commitment, keypair_path, rpc_endpoint)
-        } else {
-            let config = match CONFIG_FILE.as_ref() {
-                Some(config_file) => Config::load(config_file).unwrap_or_else(|_| {
-                    println!("Failed to load config file: {}", config_file);
-                    Config::default()
-                }),
-                None => Config::default(),
-            };
-            (config.commitment, config.keypair_path, config.json_rpc_url)
-        };
+    let (commitment, payer, rpc_enpoint) = config.read_global_config()?;
 
-    let commitment = ConfigInput::compute_commitment_config("", &commitment).1;
-    let payer = get_payer_keypair_from_path(&keypair_path)?;
-    let network_url = &get_network(&rpc_enpoint).to_string();
-    let client = RpcClient::new_with_commitment(network_url.to_string(), commitment);
+    let client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
 
-    let sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, network_url).await?;
+    let sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint).await?;
 
     let PhoenixOnChainMMConfig {
         market,
