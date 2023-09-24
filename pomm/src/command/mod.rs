@@ -1,6 +1,7 @@
 pub mod auto;
 pub mod cancle;
 pub mod initialize;
+pub mod listen_balance;
 pub mod update_quotes;
 
 use structopt::StructOpt;
@@ -8,6 +9,7 @@ use structopt::StructOpt;
 use auto::Auto;
 use cancle::Cancle;
 use initialize::Initialize;
+use listen_balance::ListenBalance;
 use update_quotes::UpdateQuotes;
 
 #[derive(Debug, StructOpt)]
