@@ -19,12 +19,16 @@ while True:
 pomm 0.1.0
 
 USAGE:
-    pomm [OPTIONS]
+    pomm <SUBCOMMAND>
 
 FLAGS:
     -h, --help       Prints help information
     -V, --version    Prints version information
 
-OPTIONS:
-    -c, --config-path <config-path>    config path for Phoenix onchain Maket Maker
+SUBCOMMANDS:
+    auto             auto generate config.toml file to ~/.config/pomm/config.toml
+    cancle           cancle all orders
+    help             Prints this message or the help of the given subcommand(s)
+    init             initialize Phoenix onchain Maket Maker and Claim Market Sate
+    update-quotes    update quotes
 ```

@@ -76,23 +76,10 @@ impl Initialize {
             client.get_latest_blockhash().await?,
         );
         let txid = client.send_and_confirm_transaction(&transaction).await?;
+
         println!(
             "Creating strategy account: https://beta.solscan.io/tx/{}?cluster=devnet",
             txid
-        );
-
-        // - Create the associated token account, if needed, for both base and quote tokens
-        // - Claim a seat on the market, if needed
-        let set_claim_marke_ix = sdk.get_maker_setup_instructions_for_market(&market).await?;
-
-        let sig = sdk
-            .client
-            .sign_send_instructions(set_claim_marke_ix, vec![])
-            .await?;
-
-        println!(
-            "Link to view transaction: https://beta.solscan.io/tx/{}?cluster=devnet",
-            sig
         );
         Ok(())
     }
