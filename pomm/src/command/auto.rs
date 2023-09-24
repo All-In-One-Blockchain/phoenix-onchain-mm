@@ -1,4 +1,5 @@
 use crate::config::Config as PhoenixConfig;
+use crate::constant::DEFAULT_CONFIG_FILE;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
@@ -27,25 +28,7 @@ impl Auto {
             } else {
                 std::fs::create_dir_all(pomm_config_path.clone())?;
                 let config_path = pomm_config_path.join("config.toml");
-                std::fs::write(
-                    config_path.clone(),
-                    r#"
-    # Optionally include your keypair path. Defaults to your Solana CLI config file.
-    keypair_path = "/home/davirain/.config/solana/id.json"
-    # Optionally include your RPC endpoint. Use "local", "dev", "main" for default endpoints. Defaults to your Solana CLI config file.
-    rpc_endpoint = "https://api.devnet.solana.com"
-    # Optionally include a commitment level. Defaults to your Solana CLI config file.
-    commitment = "confirmed"
-
-    [phoenix]
-    market = "78ehDnHgbkFxqXZwdFxa8HK7saX58GymeX2wNGdkqYLp"
-    ticker = "SOL-USD"
-    quote_refresh_frequency_in_ms = 2000
-    quote_edge_in_bps = 3
-    quote_size = 100000000
-    price_improvement_behavior = "ignore"
-    post_only = true"#,
-                )?;
+                std::fs::write(config_path.clone(), DEFAULT_CONFIG_FILE)?;
                 let config_str = std::fs::read_to_string(config_path.clone())?;
                 toml::from_str::<PhoenixConfig>(&config_str)?;
                 Ok(config_path)
