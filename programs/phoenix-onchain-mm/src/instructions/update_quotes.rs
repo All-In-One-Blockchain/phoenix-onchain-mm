@@ -65,22 +65,21 @@ pub fn update_quotes_instruction(ctx: Context<UpdateQuotes>, params: OrderParams
         .inner;
 
     msg!("Using oracle to calculate the fair price");
-    let pyth_account = &ctx.remaining_accounts[0];
-    let oracle_price = Price::load(pyth_account)?;
+
+    let base_oracle_price = Price::load(base_account)?;
     msg!(
         "oracle price = {}, oracle expo = {}",
-        oracle_price.price,
-        oracle_price.expo
+        base_oracle_price.price,
+        base_oracle_price.expo
     );
     // calculating the price by multiplying oracle price on 10^6 and dividing it on 10^expo
-    let base_fair_price = BIG_NUMBER * oracle_price.price as u128
-        / (u64::pow(BASE, (-oracle_price.expo) as u32) as u128);
+    let base_fair_price = BIG_NUMBER * base_oracle_price.price as u128
+        / (u64::pow(BASE, (-base_oracle_price.expo) as u32) as u128);
 
-    let pyth_account = &ctx.remaining_accounts[1];
-    let oracle_price = Price::load(pyth_account)?;
+    let quote_oracle_price = Price::load(quote_account)?;
 
-    let quote_fair_price = BIG_NUMBER * oracle_price.price as u128
-        / (u64::pow(BASE, (-oracle_price.expo) as u32) as u128);
+    let quote_fair_price = BIG_NUMBER * quote_oracle_price.price as u128
+        / (u64::pow(BASE, (-quote_oracle_price.expo) as u32) as u128);
     msg!(
         "Base price = {}, quote price = {}",
         base_fair_price,
