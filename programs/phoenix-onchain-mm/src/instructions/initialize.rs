@@ -1,11 +1,11 @@
 use anchor_lang::prelude::*;
 
-use super::StrategyParams;
 use crate::errors::StrategyError;
+use crate::instructions::PriceImprovementBehavior;
+use crate::instructions::StrategyParams;
 use crate::oracle::OracleConfig;
 use crate::phoenix_v1::load_header;
 use crate::state::PhoenixStrategyState;
-
 pub fn initialize_instruction(ctx: Context<Initialize>, params: StrategyParams) -> Result<()> {
     require!(
         params.quote_edge_in_bps.is_some()
@@ -14,7 +14,7 @@ pub fn initialize_instruction(ctx: Context<Initialize>, params: StrategyParams) 
         StrategyError::InvalidStrategyParams
     );
     require!(
-        params.quote_edge_in_bps.unwrap() > 0,
+        params.quote_edge_in_bps.unwrap_or(0) > 0,
         StrategyError::EdgeMustBeNonZero
     );
     load_header(&ctx.accounts.market)?;
@@ -32,10 +32,13 @@ pub fn initialize_instruction(ctx: Context<Initialize>, params: StrategyParams) 
         initial_ask_size_in_base_lots: 0,
         last_update_slot: clock.slot,
         last_update_unix_timestamp: clock.unix_timestamp,
-        quote_edge_in_bps: params.quote_edge_in_bps.unwrap(),
-        quote_size_in_quote_atoms: params.quote_size_in_quote_atoms.unwrap(),
+        quote_edge_in_bps: params.quote_edge_in_bps.unwrap_or(0),
+        quote_size_in_quote_atoms: params.quote_size_in_quote_atoms.unwrap_or(0),
         post_only: params.post_only.unwrap_or(false),
-        price_improvement_behavior: params.price_improvement_behavior.unwrap().to_u8(),
+        price_improvement_behavior: params
+            .price_improvement_behavior
+            .unwrap_or(PriceImprovementBehavior::Ignore)
+            .to_u8(),
         padding: [0; 6],
     };
     ctx.accounts
