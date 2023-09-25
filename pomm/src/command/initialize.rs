@@ -41,8 +41,10 @@ impl Initialize {
             &phoenix_onchain_mm::id(),
         );
 
-        let (oracle_account, _) =
-            Pubkey::find_program_address(&[b"oracle"], &phoenix_onchain_mm::id());
+        let (oracle_account, _) = Pubkey::find_program_address(
+            &[b"oracle", payer.pubkey().as_ref(), market.as_ref()],
+            &phoenix_onchain_mm::id(),
+        );
 
         let price_improvement = match price_improvement_behavior.as_str() {
             "Join" | "join" => PriceImprovementBehavior::Join,

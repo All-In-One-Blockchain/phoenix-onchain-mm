@@ -46,9 +46,13 @@ async fn update_quote() -> anyhow::Result<()> {
     let phoneix_config = get_pomm_config()?;
 
     let (commitment, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
+    dbg!(&commitment);
+    dbg!(&payer);
+    dbg!(&rpc_enpoint);
     let client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
 
     let mut sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint).await?;
+    dbg!(&phoneix_config);
 
     let PhoenixOnChainMMConfig {
         market,
@@ -62,20 +66,32 @@ async fn update_quote() -> anyhow::Result<()> {
         quote_account: oracle_quote_account,
     } = phoneix_config.phoenix;
 
-    // add market pubkey to sdk
-    sdk.add_market(&market).await?;
-
     let maker_setup_instructions = sdk.get_maker_setup_instructions_for_market(&market).await?;
-    sdk.client
+    dbg!(&maker_setup_instructions);
+    let ix = sdk
+        .client
         .sign_send_instructions(maker_setup_instructions, vec![])
         .await?;
+
+    println!(
+        "Claim maker seta: https://explorer.solana.com/tx/{}?cluster=devnet",
+        ix
+    );
+
+    // add market pubkey to sdk
+    sdk.add_market(&market).await?;
 
     let (strategy_key, _bump_seed) = Pubkey::find_program_address(
         &[b"phoenix", payer.pubkey().as_ref(), market.as_ref()],
         &phoenix_onchain_mm::id(),
     );
+    dbg!(&strategy_key);
 
-    let (oracle_account, _) = Pubkey::find_program_address(&[b"oracle"], &phoenix_onchain_mm::id());
+    let (oracle_account, _) = Pubkey::find_program_address(
+        &[b"oracle", payer.pubkey().as_ref(), market.as_ref()],
+        &phoenix_onchain_mm::id(),
+    );
+    dbg!(&oracle_account);
 
     let price_improvement = match price_improvement_behavior.as_str() {
         "Join" | "join" => PriceImprovementBehavior::Join,
@@ -144,6 +160,7 @@ async fn update_quote() -> anyhow::Result<()> {
             &[&payer],
             client.get_latest_blockhash().await?,
         );
+
         match client
             .send_and_confirm_transaction(&transaction)
             .await
@@ -154,7 +171,7 @@ async fn update_quote() -> anyhow::Result<()> {
                 );
             }) {
             Ok(_) => {}
-            Err(e) => println!("Failed to update quotes: {}", e),
+            Err(e) => println!("Failed to update quotes: {:#?}", e),
         }
 
         tokio::time::sleep(std::time::Duration::from_millis(

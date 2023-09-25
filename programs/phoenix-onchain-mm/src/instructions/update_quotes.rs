@@ -419,7 +419,7 @@ pub struct UpdateQuotes<'info> {
     )]
     pub phoenix_strategy: AccountLoader<'info, PhoenixStrategyState>,
     #[account(
-            seeds = [b"oracle"],
+            seeds = [b"oracle", user.key.as_ref(), market.key.as_ref()],
             bump
     )]
     pub oracle_account: Account<'info, OracleConfig>,

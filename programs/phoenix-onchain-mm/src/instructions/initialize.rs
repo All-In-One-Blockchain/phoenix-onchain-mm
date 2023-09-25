@@ -61,7 +61,7 @@ pub struct Initialize<'info> {
          init,
          payer = user,
          space = 8 + OracleConfig::LEN,
-         seeds = [b"oracle"],
+         seeds = [b"oracle", user.key.as_ref(), market.key.as_ref()],
          bump
      )]
     pub oracle_account: Account<'info, OracleConfig>,
