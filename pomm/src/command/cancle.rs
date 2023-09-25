@@ -19,7 +19,7 @@ impl Cancle {
             .ok_or(anyhow::anyhow!("cancel tx returen empty"))?;
 
         println!(
-            "canceling all orders tx:  https://beta.solscan.io/tx/{}?cluster=devnet",
+            "canceling all orders tx: https://explorer.solana.com/{}?cluster=devnet",
             cancel_order_tx_sig
         );
         println!("cancel event: {:?}", event);

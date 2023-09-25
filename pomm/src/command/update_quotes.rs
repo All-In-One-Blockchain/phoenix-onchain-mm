@@ -1,4 +1,5 @@
 use crate::config::{Config as PhoenixConfig, PhoenixOnChainMMConfig};
+use crate::constant::{PHOENIX_ONCHAIN_MM_ORACLE_SEED, PHOENIX_ONCHAIN_MM_STRATEGY_SEED};
 use crate::utils::create_airdrop_spl_ixs;
 use crate::utils::get_pomm_config;
 use anchor_lang::InstructionData;
@@ -106,12 +107,20 @@ async fn update_quote() -> anyhow::Result<()> {
     );
 
     let (strategy_key, _bump_seed) = Pubkey::find_program_address(
-        &[b"phoenix", payer.pubkey().as_ref(), market.as_ref()],
+        &[
+            PHOENIX_ONCHAIN_MM_STRATEGY_SEED,
+            payer.pubkey().as_ref(),
+            market.as_ref(),
+        ],
         &phoenix_onchain_mm::id(),
     );
 
     let (oracle_account, _) = Pubkey::find_program_address(
-        &[b"oracle", payer.pubkey().as_ref(), market.as_ref()],
+        &[
+            PHOENIX_ONCHAIN_MM_ORACLE_SEED,
+            payer.pubkey().as_ref(),
+            market.as_ref(),
+        ],
         &phoenix_onchain_mm::id(),
     );
 

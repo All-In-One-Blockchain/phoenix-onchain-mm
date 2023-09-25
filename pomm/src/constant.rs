@@ -1,3 +1,6 @@
+pub const PHOENIX_ONCHAIN_MM_STRATEGY_SEED: &[u8] = b"phoenix";
+pub const PHOENIX_ONCHAIN_MM_ORACLE_SEED: &[u8] = b"oracle";
+
 pub const DEFAULT_CONFIG_FILE: &str = r#"
 # Optionally include your keypair path. Defaults to your Solana CLI config file.
 keypair_path = "/Users/davirain/.config/solana/id.json"
