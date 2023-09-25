@@ -2,6 +2,7 @@ pub mod airdrop_base_and_quote;
 pub mod auto;
 pub mod cancle;
 pub mod fetch_market_event;
+pub mod grpc;
 pub mod initialize;
 pub mod listen_balance;
 pub mod update_quotes;
@@ -9,6 +10,7 @@ pub mod update_quotes;
 use airdrop_base_and_quote::AirdropBaseAndQuote;
 use auto::Auto;
 use cancle::Cancle;
+use fetch_market_event::FetchMarketEvent;
 use initialize::Initialize;
 use listen_balance::ListenBalance;
 use structopt::StructOpt;
@@ -34,6 +36,10 @@ pub enum Command {
     /// airdrop base and quote token
     #[structopt(name = "airdrop")]
     AirDropBaseAndQuote(AirdropBaseAndQuote),
+    #[structopt(name = "fetch-market-event")]
+    FetchMarketEvent(FetchMarketEvent),
+    #[structopt(name = "grpc")]
+    Grpc(grpc::Grpc),
 }
 
 #[derive(Debug, StructOpt)]
@@ -56,6 +62,8 @@ impl PhoneixOnChainMMCli {
             Command::Cancle(cancle) => cancle.run().await,
             Command::ListenBalance(listen_balance) => listen_balance.run().await,
             Command::AirDropBaseAndQuote(airdrop) => airdrop.run().await,
+            Command::FetchMarketEvent(fetch_market_event) => fetch_market_event.run().await,
+            Command::Grpc(grpc) => grpc.run().await,
         }
     }
 }
