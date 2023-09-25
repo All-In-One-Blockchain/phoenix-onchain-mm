@@ -6,6 +6,7 @@ pub mod grpc;
 pub mod initialize;
 pub mod listen_balance;
 pub mod update_quotes;
+pub mod view_state_order_book;
 
 use airdrop_base_and_quote::AirdropBaseAndQuote;
 use auto::Auto;
@@ -15,6 +16,7 @@ use initialize::Initialize;
 use listen_balance::ListenBalance;
 use structopt::StructOpt;
 use update_quotes::UpdateQuotes;
+use view_state_order_book::ViewStateOrderBook;
 
 #[derive(Debug, StructOpt)]
 pub enum Command {
@@ -36,10 +38,15 @@ pub enum Command {
     /// airdrop base and quote token
     #[structopt(name = "airdrop")]
     AirDropBaseAndQuote(AirdropBaseAndQuote),
+    /// fetch market event
     #[structopt(name = "fetch-market-event")]
     FetchMarketEvent(FetchMarketEvent),
+    /// grpc
     #[structopt(name = "grpc")]
     Grpc(grpc::Grpc),
+    /// view state order book
+    #[structopt(name = "view-state-order-book")]
+    ViewStateOrderBook(ViewStateOrderBook),
 }
 
 #[derive(Debug, StructOpt)]
@@ -64,6 +71,7 @@ impl PhoneixOnChainMMCli {
             Command::AirDropBaseAndQuote(airdrop) => airdrop.run().await,
             Command::FetchMarketEvent(fetch_market_event) => fetch_market_event.run().await,
             Command::Grpc(grpc) => grpc.run().await,
+            Command::ViewStateOrderBook(view_state_order_book) => view_state_order_book.run().await,
         }
     }
 }
