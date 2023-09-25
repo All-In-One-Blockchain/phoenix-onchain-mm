@@ -1,8 +1,15 @@
 [package]
 name = "phoenix-onchain-mm"
 version = "0.1.0"
-description = "Created with Anchor"
 edition = "2021"
+license = "Apache-2.0"
+keywords = ["solana", "phoenix", "maket-maker"]
+repository = "https://github.com/All-In-One-Blockchain/phoenix-onchain-mm.git"
+authors = ['davirain.yin@gmai.com']
+readme = "README.md"
+description  = """
+    Phoenix on-chain MM program
+"""
 
 [lib]
 crate-type = ["cdylib", "lib"]
