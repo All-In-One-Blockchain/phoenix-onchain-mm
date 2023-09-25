@@ -1,4 +1,5 @@
 use crate::config::{Config as PhoenixConfig, PhoenixOnChainMMConfig};
+use crate::utils::create_airdrop_spl_ixs;
 use crate::utils::get_pomm_config;
 use anchor_lang::InstructionData;
 use anchor_lang::ToAccountMetas;
@@ -46,13 +47,10 @@ async fn update_quote() -> anyhow::Result<()> {
     let phoneix_config = get_pomm_config()?;
 
     let (commitment, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
-    dbg!(&commitment);
-    dbg!(&payer);
-    dbg!(&rpc_enpoint);
+
     let client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
 
     let mut sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint).await?;
-    dbg!(&phoneix_config);
 
     let PhoenixOnChainMMConfig {
         market,
@@ -66,8 +64,37 @@ async fn update_quote() -> anyhow::Result<()> {
         quote_account: oracle_quote_account,
     } = phoneix_config.phoenix;
 
+    // add market pubkey to sdk
+    sdk.add_market(&market).await?;
+
+    // To test on devnet, (i) airdrop devnet SOL to the trader account, and (ii) airdrop tokens for the market's base and quote tokens.
+    // These instructions only work on devnet.
+    // (i) airdrop devnet SOL to the trader account. This step may not be needed if your trader keypair (from the above file_path) already has devnet SOL.
+    // Below is an example of how to airdrop devnet SOL to the trader account. Commented out here because this method fails frequently on devnet.
+    // Ensure that your trader keypair has devnet SOL to execute transactions.
+    // sdk.client
+    //     .request_airdrop(&trader.pubkey(), 1_000_000_000)
+    //     .await
+    //     .unwrap();
+
+    // (ii) Airdrop tokens for the base and quote tokens for the supplied market, used for testing trades.
+    // Uses the generic-token-faucet (https://github.com/Ellipsis-Labs/generic-token-faucet).
+    let instructions = create_airdrop_spl_ixs(&sdk, &market, &payer.pubkey())
+        .await
+        .ok_or(anyhow::anyhow!("empty instruction!"))?;
+
+    let setup_tx = sdk
+        .client
+        .sign_send_instructions(instructions, vec![])
+        .await?;
+
+    println!(
+        "Setup tx: https://explorer.solana.com/tx/{}?cluster=devnet",
+        setup_tx
+    );
+
     let maker_setup_instructions = sdk.get_maker_setup_instructions_for_market(&market).await?;
-    dbg!(&maker_setup_instructions);
+
     let ix = sdk
         .client
         .sign_send_instructions(maker_setup_instructions, vec![])
@@ -78,20 +105,15 @@ async fn update_quote() -> anyhow::Result<()> {
         ix
     );
 
-    // add market pubkey to sdk
-    sdk.add_market(&market).await?;
-
     let (strategy_key, _bump_seed) = Pubkey::find_program_address(
         &[b"phoenix", payer.pubkey().as_ref(), market.as_ref()],
         &phoenix_onchain_mm::id(),
     );
-    dbg!(&strategy_key);
 
     let (oracle_account, _) = Pubkey::find_program_address(
         &[b"oracle", payer.pubkey().as_ref(), market.as_ref()],
         &phoenix_onchain_mm::id(),
     );
-    dbg!(&oracle_account);
 
     let price_improvement = match price_improvement_behavior.as_str() {
         "Join" | "join" => PriceImprovementBehavior::Join,

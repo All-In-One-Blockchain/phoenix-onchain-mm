@@ -238,6 +238,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "anchor-spl"
+version = "0.26.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f32390ce8356f54c0f0245ea156f8190717e37285b8bf4f406a613dc4b954cde"
+dependencies = [
+ "anchor-lang",
+ "solana-program",
+ "spl-associated-token-account",
+ "spl-token",
+]
+
+[[package]]
 name = "anchor-syn"
 version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1757,6 +1769,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "generic-token-faucet"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5771d5b8ad17607a958ba26902150157f4fcd681c27a314cf6c5d55d31231f15"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
+ "spl-associated-token-account",
+]
+
+[[package]]
 name = "gethostname"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3044,6 +3067,7 @@ dependencies = [
  "bs58 0.5.0",
  "bytemuck",
  "dirs 5.0.1",
+ "generic-token-faucet",
  "itertools",
  "phoenix-onchain-mm",
  "phoenix-sdk",
