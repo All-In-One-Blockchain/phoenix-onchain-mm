@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 
 use super::StrategyParams;
 use crate::errors::StrategyError;
+use crate::oracle::OracleConfig;
 use crate::phoenix_v1::load_header;
 use crate::state::PhoenixStrategyState;
 
@@ -50,6 +51,14 @@ pub struct Initialize<'info> {
         space = 8 + std::mem::size_of::<PhoenixStrategyState>(),
     )]
     pub phoenix_strategy: AccountLoader<'info, PhoenixStrategyState>,
+    #[account(
+         init,
+         payer = user,
+         space = 8 + OracleConfig::LEN,
+         seeds = [b"oracle"],
+         bump
+     )]
+    pub oracle_account: Account<'info, OracleConfig>,
     #[account(mut)]
     pub user: Signer<'info>,
     /// CHECK: Checked in instruction

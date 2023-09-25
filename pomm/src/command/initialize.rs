@@ -17,14 +17,11 @@ use structopt::StructOpt;
 pub struct Initialize {}
 
 impl Initialize {
-    // TODO: check have cliam sate
     pub async fn run(&self) -> anyhow::Result<()> {
         let phoneix_config = get_pomm_config()?;
 
         let (commitment, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
         let client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
-
-        let sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint).await?;
 
         let PhoenixOnChainMMConfig {
             market,
@@ -70,12 +67,10 @@ impl Initialize {
         };
 
         let blockhash = client.get_latest_blockhash().await?;
-        dbg!(&blockhash);
+
         let transaction =
             Transaction::new_signed_with_payer(&[ix], Some(&payer.pubkey()), &[&payer], blockhash);
-        dbg!(&transaction);
         let txid = client.send_and_confirm_transaction(&transaction).await?;
-        dbg!(&txid);
 
         println!(
             "Creating strategy account: https://explorer.solana.com/tx/{}?cluster=devnet",

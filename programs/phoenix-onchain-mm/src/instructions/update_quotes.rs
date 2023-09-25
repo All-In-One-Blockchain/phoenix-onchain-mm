@@ -11,7 +11,7 @@ use phoenix::{
 use super::{OrderParams, PriceImprovementBehavior};
 use crate::constant::{BASE, BIG_NUMBER};
 use crate::errors::StrategyError;
-use crate::oracle::Price;
+use crate::oracle::{OracleConfig, PriceFeed};
 use crate::phoenix_v1::*;
 use crate::state::PhoenixStrategyState;
 
@@ -28,6 +28,7 @@ pub fn update_quotes_instruction(ctx: Context<UpdateQuotes>, params: OrderParams
         quote_vault,
         base_vault,
         token_program,
+        ..
     } = ctx.accounts;
 
     let mut phoenix_strategy = phoenix_strategy.load_mut()?;
@@ -66,7 +67,16 @@ pub fn update_quotes_instruction(ctx: Context<UpdateQuotes>, params: OrderParams
 
     msg!("Using oracle to calculate the fair price");
 
-    let base_oracle_price = Price::load(base_account)?;
+    let load_base_feed = &ctx.accounts.oracle_base_price;
+
+    // With high confidence, the maximum value of the loan is
+    // (price + conf) * loan_qty * 10 ^ (expo).
+    // Here is more explanation on confidence interval in Pyth:
+    // https://docs.pyth.network/consume-data/best-practices
+    let current_timestamp1 = Clock::get()?.unix_timestamp;
+    let base_oracle_price = load_base_feed
+        .get_price_no_older_than(current_timestamp1, 60)
+        .ok_or(StrategyError::PythOffline)?;
     msg!(
         "oracle price = {}, oracle expo = {}",
         base_oracle_price.price,
@@ -76,10 +86,26 @@ pub fn update_quotes_instruction(ctx: Context<UpdateQuotes>, params: OrderParams
     let base_fair_price = BIG_NUMBER * base_oracle_price.price as u128
         / (u64::pow(BASE, (-base_oracle_price.expo) as u32) as u128);
 
-    let quote_oracle_price = Price::load(quote_account)?;
+    let load_quote_feed = &ctx.accounts.oracle_quote_price;
+
+    // With high confidence, the maximum value of the loan is
+    // (price + conf) * loan_qty * 10 ^ (expo).
+    // Here is more explanation on confidence interval in Pyth:
+    // https://docs.pyth.network/consume-data/best-practices
+    let current_timestamp1 = Clock::get()?.unix_timestamp;
+    let quote_oracle_price = load_quote_feed
+        .get_price_no_older_than(current_timestamp1, 60)
+        .ok_or(StrategyError::PythOffline)?;
+
+    msg!(
+        "oracle price = {}, oracle expo = {}",
+        quote_oracle_price.price,
+        quote_oracle_price.expo
+    );
 
     let quote_fair_price = BIG_NUMBER * quote_oracle_price.price as u128
         / (u64::pow(BASE, (-quote_oracle_price.expo) as u32) as u128);
+
     msg!(
         "Base price = {}, quote price = {}",
         base_fair_price,
@@ -392,6 +418,19 @@ pub struct UpdateQuotes<'info> {
         bump,
     )]
     pub phoenix_strategy: AccountLoader<'info, PhoenixStrategyState>,
+    #[account(
+            seeds = [b"oracle"],
+            bump
+    )]
+    pub config: Account<'info, OracleConfig>,
+    #[account(
+        address = config.oracle_base_account @ StrategyError::InvalidArgument
+    )]
+    pub oracle_base_price: Account<'info, PriceFeed>,
+    #[account(
+        address = config.oracle_quote_account @ StrategyError::InvalidArgument
+    )]
+    pub oracle_quote_price: Account<'info, PriceFeed>,
     pub user: Signer<'info>,
     pub phoenix_program: Program<'info, PhoenixV1>,
     /// CHECK: Checked in CPI
