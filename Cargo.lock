@@ -3067,6 +3067,7 @@ dependencies = [
  "bs58 0.5.0",
  "bytemuck",
  "dirs 5.0.1",
+ "ellipsis-client",
  "generic-token-faucet",
  "itertools",
  "phoenix-onchain-mm",

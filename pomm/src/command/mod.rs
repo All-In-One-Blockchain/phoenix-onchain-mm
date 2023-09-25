@@ -1,17 +1,17 @@
 pub mod airdrop_base_and_quote;
 pub mod auto;
 pub mod cancle;
+pub mod fetch_market_event;
 pub mod initialize;
 pub mod listen_balance;
 pub mod update_quotes;
-
-use structopt::StructOpt;
 
 use airdrop_base_and_quote::AirdropBaseAndQuote;
 use auto::Auto;
 use cancle::Cancle;
 use initialize::Initialize;
 use listen_balance::ListenBalance;
+use structopt::StructOpt;
 use update_quotes::UpdateQuotes;
 
 #[derive(Debug, StructOpt)]
