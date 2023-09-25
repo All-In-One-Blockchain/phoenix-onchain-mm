@@ -2,8 +2,10 @@ pub mod airdrop_base_and_quote;
 pub mod auto;
 pub mod cancle;
 pub mod fetch_market_event;
+pub mod get_market_address;
 pub mod grpc;
 pub mod initialize;
+pub mod list_market;
 pub mod listen_balance;
 pub mod update_quotes;
 pub mod view_state_order_book;
@@ -12,6 +14,7 @@ use airdrop_base_and_quote::AirdropBaseAndQuote;
 use auto::Auto;
 use cancle::Cancle;
 use fetch_market_event::FetchMarketEvent;
+use get_market_address::GetMarketAddress;
 use initialize::Initialize;
 use listen_balance::ListenBalance;
 use structopt::StructOpt;
@@ -47,6 +50,12 @@ pub enum Command {
     /// view state order book
     #[structopt(name = "view-state-order-book")]
     ViewStateOrderBook(ViewStateOrderBook),
+    /// list all market
+    #[structopt(name = "list-all-market")]
+    ListMarket(list_market::ListAllMarket),
+    /// get market address
+    #[structopt(name = "get-market-address")]
+    GetMarketAddress(GetMarketAddress),
 }
 
 #[derive(Debug, StructOpt)]
@@ -72,6 +81,8 @@ impl PhoneixOnChainMMCli {
             Command::FetchMarketEvent(fetch_market_event) => fetch_market_event.run().await,
             Command::Grpc(grpc) => grpc.run().await,
             Command::ViewStateOrderBook(view_state_order_book) => view_state_order_book.run().await,
+            Command::ListMarket(list_market) => list_market.run().await,
+            Command::GetMarketAddress(get_market_address) => get_market_address.run().await,
         }
     }
 }

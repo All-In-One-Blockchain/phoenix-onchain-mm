@@ -5,6 +5,7 @@ use solana_sdk::commitment_config::CommitmentConfig;
 use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signature::read_keypair_file;
 use solana_sdk::signature::Keypair;
+use std::fmt;
 use std::str::FromStr;
 
 /// This is what we're going to decode into. Each field is optional, meaning
@@ -69,12 +70,42 @@ pub struct PhoenixOnChainMMConfig {
     pub quote_account: Pubkey,
     /// The ticker is used to pull the price from the Coinbase API, and therefore should conform to the Coinbase ticker format.
     /// Note that for all USDC quoted markets, the price feed should use "USD" instead of "USDC".
-    pub ticker: String,
+    #[serde(deserialize_with = "deserialize_ticker")]
+    pub ticker: Ticker,
     pub quote_refresh_frequency_in_ms: u64,
     pub quote_edge_in_bps: u64,
     pub quote_size: u64,
     pub price_improvement_behavior: String,
     pub post_only: bool,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Ticker {
+    pub base: String,
+    pub quote: String,
+}
+
+impl fmt::Display for Ticker {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}/{}", self.base, self.quote)
+    }
+}
+
+fn deserialize_ticker<'de, D>(deserializer: D) -> Result<Ticker, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let ticker_str = String::deserialize(deserializer)?;
+    let ticker_vec: Vec<&str> = ticker_str.split('/').collect();
+    if ticker_vec.len() != 2 {
+        return Err(serde::de::Error::custom(
+            "Ticker should be in the format of base-quote",
+        ));
+    }
+    Ok(Ticker {
+        base: ticker_vec[0].to_string(),
+        quote: ticker_vec[1].to_string(),
+    })
 }
 
 pub fn get_network(network_str: &str) -> &str {
