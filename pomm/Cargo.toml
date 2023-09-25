@@ -2,6 +2,14 @@
 name = "pomm"
 version = "0.1.0"
 edition = "2021"
+license = "Apache-2.0"
+keywords = ["solana", "phoenix"]
+repository = "https://github.com/octopus-network/ics06-solomachine.git"
+authors = ['davirain.yin@gmai.com']
+readme = "README.md"
+description  = """
+    Phoenix on-chain MM client
+"""
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
