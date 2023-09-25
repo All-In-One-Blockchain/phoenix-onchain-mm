@@ -1,5 +1,3 @@
-#![allow(unused_imports)]
-
 use structopt::StructOpt;
 
 pub mod command;

@@ -1,10 +1,10 @@
 use crate::config::Config as PhoenixConfig;
 use phoenix_sdk::sdk_client::SDKClient;
+use solana_sdk::account::Account;
 use solana_sdk::instruction::Instruction;
 use solana_sdk::program_pack::Pack;
 use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signature::Signer;
-use solana_sdk::{account::Account, signature::Signature};
 use spl_associated_token_account::instruction::create_associated_token_account;
 use spl_token::state::Mint;
 

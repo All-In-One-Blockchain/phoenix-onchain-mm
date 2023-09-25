@@ -1,4 +1,4 @@
-use crate::config::{Config as PhoenixConfig, PhoenixOnChainMMConfig};
+use crate::config::PhoenixOnChainMMConfig;
 use crate::constant::{PHOENIX_ONCHAIN_MM_ORACLE_SEED, PHOENIX_ONCHAIN_MM_STRATEGY_SEED};
 use crate::utils::get_pomm_config;
 use anchor_lang::InstructionData;
@@ -14,6 +14,7 @@ use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signer::Signer;
 use solana_sdk::transaction::Transaction;
 use structopt::StructOpt;
+
 #[derive(Debug, StructOpt)]
 pub struct Initialize {}
 

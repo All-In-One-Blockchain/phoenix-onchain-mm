@@ -1,3 +1,4 @@
+pub mod airdrop_base_and_quote;
 pub mod auto;
 pub mod cancle;
 pub mod initialize;
@@ -6,6 +7,7 @@ pub mod update_quotes;
 
 use structopt::StructOpt;
 
+use airdrop_base_and_quote::AirdropBaseAndQuote;
 use auto::Auto;
 use cancle::Cancle;
 use initialize::Initialize;
@@ -29,6 +31,9 @@ pub enum Command {
     /// listen balance
     #[structopt(name = "listen-balance")]
     ListenBalance(ListenBalance),
+    /// airdrop base and quote token
+    #[structopt(name = "airdrop")]
+    AirDropBaseAndQuote(AirdropBaseAndQuote),
 }
 
 #[derive(Debug, StructOpt)]
@@ -50,6 +55,7 @@ impl PhoneixOnChainMMCli {
             Command::UpdateQuotes(update_quotes) => update_quotes.run().await,
             Command::Cancle(cancle) => cancle.run().await,
             Command::ListenBalance(listen_balance) => listen_balance.run().await,
+            Command::AirDropBaseAndQuote(airdrop) => airdrop.run().await,
         }
     }
 }

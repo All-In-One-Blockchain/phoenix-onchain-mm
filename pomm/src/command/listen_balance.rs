@@ -1,17 +1,7 @@
-use crate::config::{Config as PhoenixConfig, PhoenixOnChainMMConfig};
 use crate::utils::get_pomm_config;
-use anchor_lang::InstructionData;
-use anchor_lang::ToAccountMetas;
 use phoenix::program::MarketHeader;
-use phoenix_onchain_mm::accounts::Initialize as InitializeAccounts;
-use phoenix_onchain_mm::instruction::Initialize as InitializeInstruction;
-use phoenix_onchain_mm::PriceImprovementBehavior;
-use phoenix_onchain_mm::StrategyParams;
 use solana_client::nonblocking::rpc_client::RpcClient;
-use solana_sdk::instruction::Instruction;
-use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signer::Signer;
-use solana_sdk::transaction::Transaction;
 use spl_associated_token_account::get_associated_token_address;
 use std::io;
 use std::io::Write;

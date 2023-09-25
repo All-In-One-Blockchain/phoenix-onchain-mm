@@ -1,4 +1,3 @@
-use crate::config::Config as PhoenixConfig;
 use crate::utils::get_pomm_config;
 use structopt::StructOpt;
 
