@@ -63,6 +63,10 @@ pub struct PhoenixOnChainMMConfig {
     /// Market pubkey to provide on
     #[serde(deserialize_with = "parse_pubkey")]
     pub market: Pubkey,
+    #[serde(deserialize_with = "parse_pubkey")]
+    pub base_account: Pubkey,
+    #[serde(deserialize_with = "parse_pubkey")]
+    pub quote_account: Pubkey,
     /// The ticker is used to pull the price from the Coinbase API, and therefore should conform to the Coinbase ticker format.
     /// Note that for all USDC quoted markets, the price feed should use "USD" instead of "USDC".
     pub ticker: String,

@@ -4,6 +4,7 @@ use anchor_lang::InstructionData;
 use anchor_lang::ToAccountMetas;
 use phoenix_onchain_mm::accounts::Initialize as InitializeAccounts;
 use phoenix_onchain_mm::instruction::Initialize as InitializeInstruction;
+use phoenix_onchain_mm::oracle::OracleConfig;
 use phoenix_onchain_mm::PriceImprovementBehavior;
 use phoenix_onchain_mm::StrategyParams;
 use solana_client::nonblocking::rpc_client::RpcClient;
@@ -31,12 +32,17 @@ impl Initialize {
             quote_refresh_frequency_in_ms: _,
             price_improvement_behavior,
             post_only,
+            base_account,
+            quote_account,
         } = phoneix_config.phoenix;
 
         let (strategy_key, _bump_seed) = Pubkey::find_program_address(
             &[b"phoenix", payer.pubkey().as_ref(), market.as_ref()],
             &phoenix_onchain_mm::id(),
         );
+
+        let (oracle_account, _) =
+            Pubkey::find_program_address(&[b"oracle"], &phoenix_onchain_mm::id());
 
         let price_improvement = match price_improvement_behavior.as_str() {
             "Join" | "join" => PriceImprovementBehavior::Join,
@@ -50,11 +56,16 @@ impl Initialize {
             quote_size_in_quote_atoms: Some(quote_size),
             price_improvement_behavior: Some(price_improvement),
             post_only: Some(post_only),
+            oracle_account_config: OracleConfig {
+                oracle_base_account: base_account,
+                oracle_quote_account: quote_account,
+            },
         };
 
         let initialize_data = InitializeInstruction { params };
         let initialize_accounts = InitializeAccounts {
             phoenix_strategy: strategy_key,
+            oracle_account,
             market,
             user: payer.pubkey(),
             system_program: solana_sdk::system_program::id(),

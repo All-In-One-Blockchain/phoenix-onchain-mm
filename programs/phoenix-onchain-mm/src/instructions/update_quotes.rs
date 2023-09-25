@@ -422,13 +422,13 @@ pub struct UpdateQuotes<'info> {
             seeds = [b"oracle"],
             bump
     )]
-    pub config: Account<'info, OracleConfig>,
+    pub oracle_account: Account<'info, OracleConfig>,
     #[account(
-        address = config.oracle_base_account @ StrategyError::InvalidArgument
+        address = oracle_account.oracle_base_account @ StrategyError::InvalidArgument
     )]
     pub oracle_base_price: Account<'info, PriceFeed>,
     #[account(
-        address = config.oracle_quote_account @ StrategyError::InvalidArgument
+        address = oracle_account.oracle_quote_account @ StrategyError::InvalidArgument
     )]
     pub oracle_quote_price: Account<'info, PriceFeed>,
     pub user: Signer<'info>,

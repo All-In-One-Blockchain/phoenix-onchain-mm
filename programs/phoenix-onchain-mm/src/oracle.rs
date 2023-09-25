@@ -6,6 +6,7 @@ use std::str::FromStr;
 use crate::errors::StrategyError;
 
 #[account]
+#[derive(Debug, Copy)]
 pub struct OracleConfig {
     pub oracle_base_account: Pubkey,
     pub oracle_quote_account: Pubkey,

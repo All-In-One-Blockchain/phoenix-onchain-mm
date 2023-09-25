@@ -2,7 +2,7 @@
 seeds = true
 skip-lint = false
 [programs.localnet]
-phoenix_onchain_mm = "CjNsMEpv3TJ6QLq9SLQS7sb7VFMP48BMCy4MwvWeNNwJ"
+phoenix_onchain_mm = "abmACXXt8pX5LYDjQxQUSu44R98nxgBfYFpytL53LDU"
 
 [registry]
 url = "https://api.apr.dev"

@@ -7,6 +7,7 @@ use phoenix::program::get_vault_address;
 use phoenix::program::MarketHeader;
 use phoenix_onchain_mm::accounts::UpdateQuotes as UpdateQuotesAccounts;
 use phoenix_onchain_mm::instruction::UpdateQuotes as UpdateQuotesInstruction;
+use phoenix_onchain_mm::oracle::OracleConfig;
 use phoenix_onchain_mm::OrderParams;
 use phoenix_onchain_mm::PriceImprovementBehavior;
 use phoenix_onchain_mm::StrategyParams;
@@ -57,6 +58,8 @@ async fn update_quote() -> anyhow::Result<()> {
         quote_refresh_frequency_in_ms,
         price_improvement_behavior,
         post_only,
+        base_account: oracle_base_account,
+        quote_account: oracle_quote_account,
     } = phoneix_config.phoenix;
 
     // add market pubkey to sdk
@@ -72,6 +75,8 @@ async fn update_quote() -> anyhow::Result<()> {
         &phoenix_onchain_mm::id(),
     );
 
+    let (oracle_account, _) = Pubkey::find_program_address(&[b"oracle"], &phoenix_onchain_mm::id());
+
     let price_improvement = match price_improvement_behavior.as_str() {
         "Join" | "join" => PriceImprovementBehavior::Join,
         "Dime" | "dime" => PriceImprovementBehavior::Dime,
@@ -84,6 +89,10 @@ async fn update_quote() -> anyhow::Result<()> {
         quote_size_in_quote_atoms: Some(quote_size),
         price_improvement_behavior: Some(price_improvement),
         post_only: Some(post_only),
+        oracle_account_config: OracleConfig {
+            oracle_base_account,
+            oracle_quote_account,
+        },
     };
 
     let data = client.get_account_data(&market).await?;
@@ -102,13 +111,15 @@ async fn update_quote() -> anyhow::Result<()> {
 
         let quote_account =
             get_associated_token_address(&payer.pubkey(), &header.quote_params.mint_key);
-        dbg!(&quote_account);
+
         let base_account =
             get_associated_token_address(&payer.pubkey(), &header.base_params.mint_key);
-        dbg!(&base_account);
 
         let accounts = UpdateQuotesAccounts {
             phoenix_strategy: strategy_key,
+            oracle_account,
+            oracle_base_price: oracle_base_account,
+            oracle_quote_price: oracle_quote_account,
             market,
             user: payer.pubkey(),
             phoenix_program: phoenix::id(),

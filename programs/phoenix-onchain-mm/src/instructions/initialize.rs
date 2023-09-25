@@ -38,6 +38,9 @@ pub fn initialize_instruction(ctx: Context<Initialize>, params: StrategyParams) 
         price_improvement_behavior: params.price_improvement_behavior.unwrap().to_u8(),
         padding: [0; 6],
     };
+    ctx.accounts
+        .oracle_account
+        .set_inner(params.oracle_account_config);
     Ok(())
 }
 

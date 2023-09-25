@@ -6,6 +6,8 @@ mod update_quotes;
 pub use initialize::*;
 pub use update_quotes::*;
 
+use crate::oracle::OracleConfig;
+
 // TODO
 #[derive(Debug, AnchorSerialize, AnchorDeserialize, Clone, Copy)]
 pub enum PriceImprovementBehavior {
@@ -44,4 +46,5 @@ pub struct StrategyParams {
     pub quote_size_in_quote_atoms: Option<u64>,
     pub price_improvement_behavior: Option<PriceImprovementBehavior>,
     pub post_only: Option<bool>,
+    pub oracle_account_config: OracleConfig,
 }
