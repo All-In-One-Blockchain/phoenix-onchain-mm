@@ -124,6 +124,7 @@ pub fn get_network(network_str: &str) -> &str {
 }
 
 pub fn get_payer_keypair_from_path(path: &str) -> anyhow::Result<Keypair> {
+    let path = &*shellexpand::tilde(path);
     read_keypair_file(path).map_err(|e| anyhow!(e.to_string()))
 }
 
