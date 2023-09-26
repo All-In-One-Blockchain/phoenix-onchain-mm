@@ -67,18 +67,19 @@ commitment = "confirmed"
 
 [phoenix]
 # this is phoneix market address
-market = "CS2H8nbAVVEUHWPF5extCSymqheQdkd4d7thik6eet9N"
+market = "CS2H8nbAVVEUHWPF5extCSymqheQdkd4d7thik6eet9N" # you can change it to your interest market
 # devnet: https://pyth.network/developers/price-feed-ids#solana-devnet
 # mainnet: https://pyth.network/developers/price-feed-ids#solana-mainnet-beta
 # Crypto.SOL/USD J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix
 # base account is oracle account in pyth
-base_account = "J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix"
+base_account = "J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix" # you can change it to your interest market
 # devnet: https://pyth.network/developers/price-feed-ids#solana-devnet
 # mainnet: https://pyth.network/developers/price-feed-ids#solana-mainnet-beta
 # Crypto.USDC/USD 5SSkXsEKQepHHAewytPVwdej4epN1nxgLVM84L4KXgy7
 # quote account is oracle account in pyth
-quote_account = "5SSkXsEKQepHHAewytPVwdej4epN1nxgLVM84L4KXgy7"
-ticker = "SOL/USDC"
+quote_account = "5SSkXsEKQepHHAewytPVwdej4epN1nxgLVM84L4KXgy7" # you can change it to your interest market
+ticker = "SOL/USDC" # you interest market
+## Below is you Maket Maker Strategy Param
 quote_refresh_frequency_in_ms = 2000
 quote_edge_in_bps = 3
 quote_size = 100000000
