@@ -1,9 +1,9 @@
-# Pomm Bot
+# Pomm Client
 
 ## Pomm usage
 
 ```bash
-pomm 0.1.0
+pomm 0.1.1
 
 USAGE:
     pomm <SUBCOMMAND>
@@ -18,6 +18,7 @@ SUBCOMMANDS:
     cancle                   cancle all orders
     fetch-market-event       fetch market event
     get-market-address       get market address
+    get-price                get base and quote price
     grpc                     grpc
     help                     Prints this message or the help of the given subcommand(s)
     init                     initialize Phoenix onchain Maket Maker and Claim Market Sate
