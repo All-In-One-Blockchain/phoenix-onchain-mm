@@ -123,7 +123,7 @@ async fn rebalance_task() -> anyhow::Result<()> {
     let quote_balance = real_quote_price * quote_start_balance.parse::<f64>()?;
     let target_balance_ratio = 1.0;
     loop {
-        quto_balance(
+        rebalance(
             &market,
             base_balance,
             real_base_price,
@@ -134,12 +134,12 @@ async fn rebalance_task() -> anyhow::Result<()> {
         )
         .await?;
 
-        // every one hour rebalance
-        tokio::time::sleep(std::time::Duration::from_secs(60 * 60)).await;
+        // every 1 minute rebalance
+        tokio::time::sleep(std::time::Duration::from_secs(60)).await;
     }
 }
 
-async fn quto_balance(
+async fn rebalance(
     market_key: &Pubkey,
     base_balance: f64,
     base_price: f64,
