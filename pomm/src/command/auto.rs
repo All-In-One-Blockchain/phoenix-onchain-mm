@@ -18,7 +18,6 @@ impl Auto {
             toml::from_str::<PhoenixConfig>(&config_str)?;
             Ok(config_path)
         } else {
-            println!("enpter not input config file");
             // open  config file path is  ~/.config/pomm/config.toml
             let home_path = dirs::home_dir().ok_or(anyhow::anyhow!("can't open home dir"))?;
             let pomm_config_path = home_path.join(".config").join("pomm");
