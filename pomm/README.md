@@ -1,5 +1,32 @@
 # Pomm Client
 
+> Notice this Phoenix On-chain Market Maker only support Devnet
+
+## Per
+
+1. install [Rust](https://www.rust-lang.org/tools/install)
+2. install [Solana-cli](https://docs.solana.com/cli/install-solana-cli-tools)
+    - `sh -c "$(curl -sSfL https://release.solana.com/v1.14.14/install)"`
+3. install pomm by Cargo
+    - `cargo install pomm`
+4. generate keypair
+    - `solana-keygen new` this will generate keypair to `~/.config/solana/id.json`
+
+## Usage Step
+
+1. generate default config
+    - `pomm auto` this will generate default config.toml file to `~/.config/pomm/config.toml`, you can modify it. to change market and base and quote coin account, for you interest market.
+2. airdrop base and quote coin
+    - `pomm airdrop`
+3. init phoenix market
+    - `pomm init`
+4. update quotes
+    - `pomm update-quotes`
+5. listen balance
+    - `pomm listen-balance`
+
+Below this is pomm command support.
+
 ## Pomm usage
 
 ```bash
