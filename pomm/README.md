@@ -32,7 +32,7 @@ SUBCOMMANDS:
 
 ```toml
 # Optionally include your keypair path. Defaults to your Solana CLI config file.
-keypair_path = "/Users/davirain/.config/solana/id.json"
+keypair_path = "~/.config/solana/id.json"
 # Optionally include your RPC endpoint. Use "local", "dev", "main" for default endpoints. Defaults to your Solana CLI config file.
 rpc_endpoint = "https://api.devnet.solana.com"
 # Optionally include a commitment level. Defaults to your Solana CLI config file.
@@ -51,7 +51,7 @@ base_account = "J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix"
 # Crypto.USDC/USD 5SSkXsEKQepHHAewytPVwdej4epN1nxgLVM84L4KXgy7
 # quote account is oracle account in pyth
 quote_account = "5SSkXsEKQepHHAewytPVwdej4epN1nxgLVM84L4KXgy7"
-ticker = "SOL-USDC"
+ticker = "SOL/USDC"
 quote_refresh_frequency_in_ms = 2000
 quote_edge_in_bps = 3
 quote_size = 100000000
