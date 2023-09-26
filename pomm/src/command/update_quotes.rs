@@ -1,4 +1,5 @@
 use crate::config::PhoenixOnChainMMConfig;
+use crate::constant::BASE;
 use crate::constant::{PHOENIX_ONCHAIN_MM_ORACLE_SEED, PHOENIX_ONCHAIN_MM_STRATEGY_SEED};
 use crate::utils::get_pomm_config;
 use anchor_lang::InstructionData;
@@ -24,7 +25,10 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
-pub struct UpdateQuotes {}
+pub struct UpdateQuotes {
+    #[structopt(long, default_value = "60")]
+    pub rebalance_sec: u64,
+}
 
 impl UpdateQuotes {
     // TODO: It should automatically rebalance and be able to maintain 24/7 liquidity.
@@ -33,7 +37,7 @@ impl UpdateQuotes {
         let update_quote_task_handle = tokio::spawn(update_quote());
 
         // 创建一个异步任务线程执行另一个任务
-        let rebalance_task_handle = tokio::spawn(rebalance_task());
+        let rebalance_task_handle = tokio::spawn(rebalance_task(self.rebalance_sec));
 
         // 等待异步任务执行完成
         let (_v1, _v2) = tokio::join!(update_quote_task_handle, rebalance_task_handle);
@@ -42,7 +46,7 @@ impl UpdateQuotes {
     }
 }
 
-async fn rebalance_task() -> anyhow::Result<()> {
+async fn rebalance_task(reblance_sec: u64) -> anyhow::Result<()> {
     let phoneix_config = get_pomm_config()?;
 
     let (commitment, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
@@ -68,7 +72,7 @@ async fn rebalance_task() -> anyhow::Result<()> {
         .get_price_no_older_than(current_time, 60)
         .ok_or(anyhow::anyhow!("base price is unavaiable"))?;
 
-    let real_base_price = base_price.price as f64 * 10.0f64.powi(base_price.expo);
+    let real_base_price = base_price.price as f64 * BASE.powi(base_price.expo);
 
     println!(
         "Base price ........... {} x 10^{} = {}",
@@ -85,7 +89,7 @@ async fn rebalance_task() -> anyhow::Result<()> {
         .get_price_no_older_than(current_time, 60)
         .ok_or(anyhow::anyhow!("base price is unavaiable"))?;
 
-    let real_quote_price = quote_price.price as f64 * 10.0f64.powi(quote_price.expo);
+    let real_quote_price = quote_price.price as f64 * BASE.powi(quote_price.expo);
 
     println!(
         "Quote price ........... {} x 10^{} = {}",
@@ -134,8 +138,7 @@ async fn rebalance_task() -> anyhow::Result<()> {
         )
         .await?;
 
-        // every 1 minute rebalance
-        tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+        tokio::time::sleep(std::time::Duration::from_secs(reblance_sec)).await;
     }
 }
 

@@ -12,7 +12,10 @@ use structopt::StructOpt;
 use tokio::time::Duration;
 
 #[derive(Debug, StructOpt)]
-pub struct FetchMarketEvent {}
+pub struct FetchMarketEvent {
+    #[structopt(long, default_value = "200")]
+    pub millis: u64,
+}
 
 impl FetchMarketEvent {
     pub async fn run(&self) -> anyhow::Result<()> {
@@ -85,7 +88,7 @@ impl FetchMarketEvent {
 
             // Note: this is a basic polling loop, if there are >1000 signatures in 200ms
             // events will get dropped
-            tokio::time::sleep(Duration::from_millis(200)).await;
+            tokio::time::sleep(Duration::from_millis(self.millis)).await;
         }
     }
 }

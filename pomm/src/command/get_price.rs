@@ -1,8 +1,8 @@
 use crate::config::PhoenixOnChainMMConfig;
+use crate::constant::BASE;
 use crate::utils::get_pomm_config;
 use pyth_sdk_solana::load_price_feed_from_account;
 use solana_client::nonblocking::rpc_client::RpcClient;
-// use std::str::FromStr;
 use std::time::{SystemTime, UNIX_EPOCH};
 use structopt::StructOpt;
 
@@ -35,7 +35,7 @@ impl GetPrice {
             .get_price_no_older_than(current_time, 60)
             .ok_or(anyhow::anyhow!("base price is unavaiable"))?;
 
-        let result = base_price.price as f64 * 10.0f64.powi(base_price.expo);
+        let result = base_price.price as f64 * BASE.powi(base_price.expo);
 
         println!(
             "Base price ........... {} x 10^{} = {}",
@@ -53,7 +53,7 @@ impl GetPrice {
             .get_price_no_older_than(current_time, 60)
             .ok_or(anyhow::anyhow!("base price is unavaiable"))?;
 
-        let result = quote_price.price as f64 * 10.0f64.powi(quote_price.expo);
+        let result = quote_price.price as f64 * BASE.powi(quote_price.expo);
 
         println!(
             "Quote price ........... {} x 10^{} = {}",

@@ -68,7 +68,6 @@ impl ListAllMarket {
             .await?;
 
         println!("Found {} markets", program_accounts.len());
-        // let mut sol_usdc_market: Option<Pubkey> = None;
 
         for (market_pubkey, account) in program_accounts {
             let account_cloned = account.clone();

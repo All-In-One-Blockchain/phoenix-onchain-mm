@@ -17,7 +17,12 @@ use std::mem::size_of;
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
-pub struct GetMarketAddress {}
+pub struct GetMarketAddress {
+    #[structopt(long, default_value = "5")]
+    pub levels: usize,
+    #[structopt(long, default_value = "4")]
+    pub precision: usize,
+}
 
 fn get_discriminant(type_name: &str) -> u64 {
     u64::from_le_bytes(
@@ -27,15 +32,12 @@ fn get_discriminant(type_name: &str) -> u64 {
     )
 }
 
-/// Sample code for getting market data from the blockchain (devnet)
-/// Can run this via: cargo run -- --rpc https://api.devnet.solana.com
+// getting market data from the blockchain (devnet)
 impl GetMarketAddress {
     pub async fn run(&self) -> anyhow::Result<()> {
         let phoneix_config = get_pomm_config()?;
 
         let (commitment, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
-
-        let _sdk = SDKClient::new(&payer, &rpc_enpoint).await?;
 
         let client = EllipsisClient::from_rpc(
             RpcClient::new_with_commitment(rpc_enpoint, commitment),
@@ -100,7 +102,7 @@ impl GetMarketAddress {
 
         let sdk_client = SDKClient::new_from_ellipsis_client_with_all_markets(client).await?;
         let orderbook = sdk_client.get_market_orderbook(&sol_usdc_market).await?;
-        orderbook.print_ladder(5, 4);
+        orderbook.print_ladder(self.levels, self.precision);
 
         Ok(())
     }

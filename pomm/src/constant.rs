@@ -1,5 +1,6 @@
 pub const PHOENIX_ONCHAIN_MM_STRATEGY_SEED: &[u8] = b"phoenix";
 pub const PHOENIX_ONCHAIN_MM_ORACLE_SEED: &[u8] = b"oracle";
+pub const BASE: f64 = 10.0;
 
 pub const DEFAULT_CONFIG_FILE: &str = r#"
 # Optionally include your keypair path. Defaults to your Solana CLI config file.
@@ -17,7 +18,7 @@ base_account = "J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix"
 # https://pyth.network/developers/price-feed-ids#solana-devnet
 # Crypto.USDC/USD 5SSkXsEKQepHHAewytPVwdej4epN1nxgLVM84L4KXgy7
 quote_account = "5SSkXsEKQepHHAewytPVwdej4epN1nxgLVM84L4KXgy7"
-ticker = "SOL-USDC"
+ticker = "SOL/USDC"
 quote_refresh_frequency_in_ms = 2000
 quote_edge_in_bps = 3
 quote_size = 100000000
