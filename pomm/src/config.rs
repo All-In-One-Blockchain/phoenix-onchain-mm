@@ -129,10 +129,12 @@ pub fn get_payer_keypair_from_path(path: &str) -> anyhow::Result<Keypair> {
 
 #[test]
 fn test_read_config() {
+    let home_path = dirs::home_dir()
+        .ok_or(anyhow::anyhow!("can't open home dir"))
+        .unwrap();
+    let config_path = home_path.join("/phoenix-onchain-mm/config.toml");
     // 读取配置文件
-    let config_str =
-        std::fs::read_to_string("/Users/davirain/solana/hackhouse/phoenix-onchain-mm/config.toml")
-            .unwrap();
+    let config_str = std::fs::read_to_string(config_path).unwrap();
     // 解析配置文件
     let config: Config = toml::from_str(&config_str).unwrap();
 
