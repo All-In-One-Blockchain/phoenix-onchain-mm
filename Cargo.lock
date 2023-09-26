@@ -3073,6 +3073,7 @@ dependencies = [
  "phoenix-onchain-mm",
  "phoenix-sdk",
  "phoenix-v1",
+ "pyth-sdk-solana",
  "rand 0.7.3",
  "reqwest",
  "serde",

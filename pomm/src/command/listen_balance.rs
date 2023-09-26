@@ -48,7 +48,7 @@ impl ListenBalance {
             .ui_amount_string;
 
         println!(
-            "Base Balance: {}, QuoteBalance: {}\n",
+            "Base Balance: {:#?}, QuoteBalance: {:#?}\n",
             base_start_balance, quote_start_balance
         );
 

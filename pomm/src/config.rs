@@ -91,6 +91,12 @@ impl fmt::Display for Ticker {
     }
 }
 
+impl Ticker {
+    pub fn to_string_for_coinbase(&self) -> String {
+        format!("{}-{}", self.base, self.quote)
+    }
+}
+
 fn deserialize_ticker<'de, D>(deserializer: D) -> Result<Ticker, D::Error>
 where
     D: Deserializer<'de>,

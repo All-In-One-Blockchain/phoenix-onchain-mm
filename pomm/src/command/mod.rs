@@ -3,6 +3,7 @@ pub mod auto;
 pub mod cancle;
 pub mod fetch_market_event;
 pub mod get_market_address;
+pub mod get_price;
 pub mod grpc;
 pub mod initialize;
 pub mod list_market;
@@ -15,6 +16,7 @@ use auto::Auto;
 use cancle::Cancle;
 use fetch_market_event::FetchMarketEvent;
 use get_market_address::GetMarketAddress;
+use get_price::GetPrice;
 use initialize::Initialize;
 use listen_balance::ListenBalance;
 use structopt::StructOpt;
@@ -56,6 +58,9 @@ pub enum Command {
     /// get market address
     #[structopt(name = "get-market-address")]
     GetMarketAddress(GetMarketAddress),
+    /// get base and quote price
+    #[structopt(name = "get-price")]
+    GetPrice(GetPrice),
 }
 
 #[derive(Debug, StructOpt)]
@@ -83,6 +88,7 @@ impl PhoneixOnChainMMCli {
             Command::ViewStateOrderBook(view_state_order_book) => view_state_order_book.run().await,
             Command::ListMarket(list_market) => list_market.run().await,
             Command::GetMarketAddress(get_market_address) => get_market_address.run().await,
+            Command::GetPrice(get_price) => get_price.run().await,
         }
     }
 }
