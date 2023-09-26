@@ -2883,7 +2883,7 @@ dependencies = [
 
 [[package]]
 name = "phoenix-onchain-mm"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anchor-lang",
  "phoenix-v1",
@@ -3058,7 +3058,7 @@ dependencies = [
 
 [[package]]
 name = "pomm"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anchor-lang",
  "anyhow",
