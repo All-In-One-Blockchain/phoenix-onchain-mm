@@ -6,7 +6,12 @@ use solana_client::nonblocking::rpc_client::RpcClient;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
-pub struct ViewStateOrderBook {}
+pub struct ViewStateOrderBook {
+    #[structopt(long, default_value = "5")]
+    pub levels: usize,
+    #[structopt(long, default_value = "4")]
+    pub precision: usize,
+}
 
 impl ViewStateOrderBook {
     pub async fn run(&self) -> anyhow::Result<()> {
@@ -23,7 +28,7 @@ impl ViewStateOrderBook {
         let sdk_client = SDKClient::new_from_ellipsis_client(client).await?;
 
         let orderbook = sdk_client.get_market_orderbook(&market).await?;
-        orderbook.print_ladder(5, 4);
+        orderbook.print_ladder(self.levels, self.precision);
 
         Ok(())
     }
