@@ -78,7 +78,7 @@ pub struct PhoenixOnChainMMConfig {
 
 impl PhoenixOnChainMMConfig {
     pub fn get_base_oracle_account(&self) -> anyhow::Result<Pubkey> {
-        match self.ticker.base.as_str() {
+        match self.ticker.base.as_str().to_lowercase().as_str() {
             "sol" => Ok(ids::sol_oracle::id()),
             "eth" => Ok(ids::eth_oracle::id()),
             "bonk" => Ok(ids::bonk_oracle::id()),
@@ -93,7 +93,7 @@ impl PhoenixOnChainMMConfig {
     }
 
     pub fn get_quote_oracle_account(&self) -> anyhow::Result<Pubkey> {
-        match self.ticker.quote.as_str() {
+        match self.ticker.quote.as_str().to_lowercase().as_str() {
             "sol" => Ok(ids::sol_oracle::id()),
             "eth" => Ok(ids::eth_oracle::id()),
             "bonk" => Ok(ids::bonk_oracle::id()),
