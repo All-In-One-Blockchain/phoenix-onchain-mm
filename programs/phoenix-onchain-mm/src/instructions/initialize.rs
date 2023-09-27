@@ -6,6 +6,7 @@ use crate::instructions::StrategyParams;
 use crate::oracle::OracleConfig;
 use crate::phoenix_v1::load_header;
 use crate::state::PhoenixStrategyState;
+
 pub fn initialize_instruction(ctx: Context<Initialize>, params: StrategyParams) -> Result<()> {
     require!(
         params.quote_edge_in_bps.is_some()

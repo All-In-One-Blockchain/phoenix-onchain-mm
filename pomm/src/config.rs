@@ -134,9 +134,7 @@ fn test_read_config() {
         .ok_or(anyhow::anyhow!("can't open home dir"))
         .unwrap();
     let config_path = home_path.join("/phoenix-onchain-mm/config.toml");
-    // 读取配置文件
     let config_str = std::fs::read_to_string(config_path).unwrap();
-    // 解析配置文件
     let config: Config = toml::from_str(&config_str).unwrap();
 
     println!("{:#?}", config);

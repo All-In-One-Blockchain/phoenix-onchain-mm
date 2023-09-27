@@ -22,7 +22,9 @@ pub struct PriceFeed(pyth_sdk::PriceFeed);
 impl anchor_lang::Owner for PriceFeed {
     fn owner() -> Pubkey {
         // Make sure the owner is the pyth oracle account on solana devnet
-        let oracle_addr = "gSbePebfvPy7tRqimPoVecS2UsBvYv46ynrzWocc92s";
+        // devnet pyth oracle account: "gSbePebfvPy7tRqimPoVecS2UsBvYv46ynrzWocc92s"
+        // main-beta pyth oracle account: FsJ3A3u2vn5cTVofAjvy6y5kwABJAqYWpe4975bi2epH
+        let oracle_addr = "FsJ3A3u2vn5cTVofAjvy6y5kwABJAqYWpe4975bi2epH";
         Pubkey::from_str(oracle_addr).unwrap()
     }
 }

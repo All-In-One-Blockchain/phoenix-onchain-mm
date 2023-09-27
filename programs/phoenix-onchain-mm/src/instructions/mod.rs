@@ -8,7 +8,6 @@ pub use update_quotes::*;
 
 use crate::oracle::OracleConfig;
 
-// TODO
 #[derive(Debug, AnchorSerialize, AnchorDeserialize, Clone, Copy)]
 pub enum PriceImprovementBehavior {
     Join,

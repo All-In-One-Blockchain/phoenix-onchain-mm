@@ -19,3 +19,8 @@ while True:
     - use avm install 0.26.0
 - solana-cli 1.14.14
     - use solana-install init 1.14.14
+
+## Phoenix On-chain Market Maker network
+
+- on devnet program id: `Be2ydETBafXycLHCGgPcW4VCwoexmbdectPG1Wh2Xihk`
+- on main-beta program id: ``

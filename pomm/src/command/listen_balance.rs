@@ -50,7 +50,7 @@ impl ListenBalance {
             base_start_balance, quote_start_balance
         );
 
-        io::stdout().flush()?; // 刷新标准输出缓冲区
+        io::stdout().flush()?;
 
         loop {
             let quote_balance = client
@@ -68,9 +68,8 @@ impl ListenBalance {
                 base_balance, quote_balance
             );
 
-            io::stdout().flush()?; // 刷新标准输出缓冲区
+            io::stdout().flush()?;
 
-            // 休眠一段时间，以控制更新速度
             sleep(Duration::from_secs(self.sec)).await;
         }
     }
