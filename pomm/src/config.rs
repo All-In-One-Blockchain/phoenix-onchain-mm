@@ -1,3 +1,4 @@
+use crate::ids;
 use anyhow::anyhow;
 use serde::{Deserialize, Deserializer};
 use solana_cli_config::{Config as SolanaConfig, ConfigInput, CONFIG_FILE};
@@ -59,15 +60,11 @@ where
 /// table.
 ///
 /// Again, each field is optional, meaning they don't have to be present.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct PhoenixOnChainMMConfig {
     /// Market pubkey to provide on
     #[serde(deserialize_with = "parse_pubkey")]
     pub market: Pubkey,
-    #[serde(deserialize_with = "parse_pubkey")]
-    pub base_account: Pubkey,
-    #[serde(deserialize_with = "parse_pubkey")]
-    pub quote_account: Pubkey,
     /// The ticker is used to pull the price from the Coinbase API, and therefore should conform to the Coinbase ticker format.
     /// Note that for all USDC quoted markets, the price feed should use "USD" instead of "USDC".
     #[serde(deserialize_with = "deserialize_ticker")]
@@ -79,7 +76,39 @@ pub struct PhoenixOnChainMMConfig {
     pub post_only: bool,
 }
 
-#[derive(Debug, Deserialize)]
+impl PhoenixOnChainMMConfig {
+    pub fn get_base_oracle_account(&self) -> anyhow::Result<Pubkey> {
+        match self.ticker.base.as_str() {
+            "sol" => Ok(ids::sol_oracle::id()),
+            "eth" => Ok(ids::eth_oracle::id()),
+            "bonk" => Ok(ids::bonk_oracle::id()),
+            "usdc" => Ok(ids::usdc_oracle::id()),
+            "msol" => Ok(ids::msol_oracle::id()),
+            "jitosol" => Ok(ids::jitosol_oracle::id()),
+            _ => Err(anyhow::anyhow!(
+                "Invalid base({}) currency for oracle account",
+                self.ticker.base
+            )),
+        }
+    }
+
+    pub fn get_quote_oracle_account(&self) -> anyhow::Result<Pubkey> {
+        match self.ticker.quote.as_str() {
+            "sol" => Ok(ids::sol_oracle::id()),
+            "eth" => Ok(ids::eth_oracle::id()),
+            "bonk" => Ok(ids::bonk_oracle::id()),
+            "usdc" => Ok(ids::usdc_oracle::id()),
+            "msol" => Ok(ids::msol_oracle::id()),
+            "jitosol" => Ok(ids::jitosol_oracle::id()),
+            _ => Err(anyhow::anyhow!(
+                "Invalid base({}) currency for oracle account",
+                self.ticker.base
+            )),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone)]
 pub struct Ticker {
     pub base: String,
     pub quote: String,

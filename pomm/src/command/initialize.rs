@@ -27,15 +27,15 @@ impl Initialize {
 
         let PhoenixOnChainMMConfig {
             market,
-            ticker: _,
             quote_edge_in_bps,
             quote_size,
-            quote_refresh_frequency_in_ms: _,
             price_improvement_behavior,
             post_only,
-            base_account,
-            quote_account,
-        } = phoneix_config.phoenix;
+            ..
+        } = phoneix_config.phoenix.clone();
+
+        let base_account = phoneix_config.phoenix.get_base_oracle_account()?;
+        let quote_account = phoneix_config.phoenix.get_quote_oracle_account()?;
 
         let (strategy_key, _bump_seed) = Pubkey::find_program_address(
             &[

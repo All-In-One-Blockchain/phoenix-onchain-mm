@@ -55,12 +55,10 @@ async fn rebalance_task(reblance_sec: u64) -> anyhow::Result<()> {
 
     let sdk = SDKClient::new(&payer, &rpc_enpoint).await?;
 
-    let PhoenixOnChainMMConfig {
-        market,
-        base_account,
-        quote_account,
-        ..
-    } = phoneix_config.phoenix;
+    let PhoenixOnChainMMConfig { market, .. } = phoneix_config.phoenix.clone();
+
+    let base_account = phoneix_config.phoenix.get_base_oracle_account()?;
+    let quote_account = phoneix_config.phoenix.get_quote_oracle_account()?;
 
     // get price data from key
     let mut base_price_account = client.get_account(&base_account).await?;
@@ -208,9 +206,10 @@ async fn update_quote() -> anyhow::Result<()> {
         quote_refresh_frequency_in_ms,
         price_improvement_behavior,
         post_only,
-        base_account: oracle_base_account,
-        quote_account: oracle_quote_account,
-    } = phoneix_config.phoenix;
+    } = phoneix_config.phoenix.clone();
+
+    let oracle_base_account = phoneix_config.phoenix.get_base_oracle_account()?;
+    let oracle_quote_account = phoneix_config.phoenix.get_quote_oracle_account()?;
 
     // add market pubkey to sdk
     sdk.add_market(&market).await?;

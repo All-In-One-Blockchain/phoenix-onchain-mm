@@ -1,4 +1,3 @@
-use crate::config::PhoenixOnChainMMConfig;
 use crate::constant::BASE;
 use crate::utils::get_pomm_config;
 use pyth_sdk_solana::load_price_feed_from_account;
@@ -19,11 +18,8 @@ impl GetPrice {
 
         let _sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint).await?;
 
-        let PhoenixOnChainMMConfig {
-            base_account,
-            quote_account,
-            ..
-        } = phoneix_config.phoenix;
+        let base_account = phoneix_config.phoenix.get_base_oracle_account()?;
+        let quote_account = phoneix_config.phoenix.get_quote_oracle_account()?;
 
         // get price data from key
         let mut base_price_account = client.get_account(&base_account).await?;

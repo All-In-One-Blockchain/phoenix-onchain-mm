@@ -3,6 +3,7 @@ use structopt::StructOpt;
 pub mod command;
 pub mod config;
 pub mod constant;
+pub mod ids;
 pub mod utils;
 
 use command::PhoneixOnChainMMCli;

@@ -9,6 +9,7 @@ pub mod initialize;
 pub mod list_market;
 pub mod listen_balance;
 pub mod update_quotes;
+pub mod validate;
 pub mod view_state_order_book;
 
 use airdrop_base_and_quote::AirdropBaseAndQuote;
@@ -61,6 +62,9 @@ pub enum Command {
     /// get base and quote price
     #[structopt(name = "get-price")]
     GetPrice(GetPrice),
+    /// validate config
+    #[structopt(name = "validate")]
+    Validate(validate::Validate),
 }
 
 #[derive(Debug, StructOpt)]
@@ -89,6 +93,7 @@ impl PhoneixOnChainMMCli {
             Command::ListMarket(list_market) => list_market.run().await,
             Command::GetMarketAddress(get_market_address) => get_market_address.run().await,
             Command::GetPrice(get_price) => get_price.run().await,
+            Command::Validate(validate) => validate.run().await,
         }
     }
 }

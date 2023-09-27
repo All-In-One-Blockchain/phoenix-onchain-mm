@@ -12,12 +12,6 @@ commitment = "confirmed"
 
 [phoenix]
 market = "CS2H8nbAVVEUHWPF5extCSymqheQdkd4d7thik6eet9N"
-# https://pyth.network/developers/price-feed-ids#solana-devnet
-# Crypto.SOL/USD J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix
-base_account = "J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix"
-# https://pyth.network/developers/price-feed-ids#solana-devnet
-# Crypto.USDC/USD 5SSkXsEKQepHHAewytPVwdej4epN1nxgLVM84L4KXgy7
-quote_account = "5SSkXsEKQepHHAewytPVwdej4epN1nxgLVM84L4KXgy7"
 ticker = "SOL/USDC"
 quote_refresh_frequency_in_ms = 2000
 quote_edge_in_bps = 3
