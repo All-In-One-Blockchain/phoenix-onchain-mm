@@ -49,7 +49,7 @@ fn get_discriminant(type_name: &str) -> u64 {
 }
 
 async fn check_market_address_by_ticker(
-    maket_address: Pubkey,
+    maket: Pubkey,
     client: &RpcClient,
     ticker: Ticker,
 ) -> anyhow::Result<()> {
@@ -99,18 +99,15 @@ async fn check_market_address_by_ticker(
     if market_address.is_empty() {
         println!("No {} market found", ticker);
         Err(anyhow::anyhow!("No {} market found", ticker))
+    } else if market_address.iter().any(|x| *x == maket) {
+        println!(
+            "market_address({:?}) -> Market address {} is valid",
+            market_address, maket
+        );
+        Ok(())
     } else {
-        println!("Found {} {} markets", market_address.len(), ticker);
-        if market_address.iter().any(|x| *x == maket_address) {
-            println!("Market address {} is valid", maket_address);
-            Ok(())
-        } else {
-            println!("Market address {} is invalid", maket_address);
-            Err(anyhow::anyhow!(
-                "Market address {} is invalid",
-                maket_address
-            ))
-        }
+        println!("Market address {} is invalid", maket);
+        Err(anyhow::anyhow!("Market address {} is invalid", maket))
     }
 }
 

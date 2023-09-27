@@ -2,7 +2,6 @@ use crate::config::PhoenixOnChainMMConfig;
 use crate::utils::get_pomm_config;
 use ellipsis_client::EllipsisClient;
 use phoenix::program::accounts::MarketHeader;
-use phoenix_sdk::sdk_client::SDKClient;
 use solana_account_decoder::UiAccountEncoding;
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_client::rpc_config::RpcAccountInfoConfig;
@@ -74,7 +73,7 @@ impl GetMarketAddress {
             .await?;
 
         println!("Found {} markets", program_accounts.len());
-        let mut market_address: Option<Pubkey> = None;
+        let mut market_address: Vec<Pubkey> = vec![];
 
         for (market_pubkey, account) in program_accounts {
             let account_cloned = account.clone();
@@ -87,22 +86,19 @@ impl GetMarketAddress {
             if header.base_params.mint_key == generic_token_faucet::get_mint_address(&ticker.base)
                 || header.base_params.mint_key == spl_token::native_mint::id()
             {
-                market_address = Some(market_pubkey);
+                market_address.push(market_pubkey);
             }
         }
 
-        if market_address.is_none() {
+        if market_address.is_empty() {
             println!("No {} market found", ticker);
             return Ok(());
         }
 
         println!("Getting {} order book", ticker);
-        let sol_usdc_market = market_address.unwrap();
-        println!("Market pubkey: {:?}", sol_usdc_market);
-
-        let sdk_client = SDKClient::new_from_ellipsis_client_with_all_markets(client).await?;
-        let orderbook = sdk_client.get_market_orderbook(&sol_usdc_market).await?;
-        orderbook.print_ladder(self.levels, self.precision);
+        for market in market_address {
+            println!("Market pubkey: {:?}", market);
+        }
 
         Ok(())
     }
