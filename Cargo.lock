@@ -3087,6 +3087,7 @@ dependencies = [
  "spl-associated-token-account",
  "spl-token",
  "structopt",
+ "thiserror",
  "tokio",
  "toml 0.8.0",
  "yellowstone-grpc-client",

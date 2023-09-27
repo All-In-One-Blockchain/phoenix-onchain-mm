@@ -1,4 +1,5 @@
 use crate::config::PhoenixOnChainMMConfig;
+use crate::errors::Error;
 use crate::utils::get_pomm_config;
 use ellipsis_client::EllipsisClient;
 use phoenix_sdk::sdk_client::SDKClient;
@@ -15,9 +16,11 @@ pub struct ViewStateOrderBook {
 
 impl ViewStateOrderBook {
     pub async fn run(&self) -> anyhow::Result<()> {
-        let phoneix_config = get_pomm_config()?;
+        let phoneix_config = get_pomm_config().map_err(|e| Error::from(e.to_string()))?;
 
-        let (commitment, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
+        let (commitment, payer, rpc_enpoint) = phoneix_config
+            .read_global_config()
+            .map_err(|e| Error::from(e.to_string()))?;
 
         let PhoenixOnChainMMConfig { market, .. } = phoneix_config.phoenix;
 
@@ -25,9 +28,14 @@ impl ViewStateOrderBook {
             RpcClient::new_with_commitment(rpc_enpoint, commitment),
             &payer,
         )?;
-        let sdk_client = SDKClient::new_from_ellipsis_client(client).await?;
+        let sdk_client = SDKClient::new_from_ellipsis_client(client)
+            .await
+            .map_err(|e| Error::from(e.to_string()))?;
 
-        let orderbook = sdk_client.get_market_orderbook(&market).await?;
+        let orderbook = sdk_client
+            .get_market_orderbook(&market)
+            .await
+            .map_err(|e| Error::from(e.to_string()))?;
         orderbook.print_ladder(self.levels, self.precision);
 
         Ok(())

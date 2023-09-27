@@ -1,4 +1,5 @@
 use crate::config::PhoenixOnChainMMConfig;
+use crate::errors::Error;
 use crate::utils::get_pomm_config;
 use ellipsis_client::EllipsisClient;
 use phoenix::program::accounts::MarketHeader;
@@ -34,9 +35,11 @@ fn get_discriminant(type_name: &str) -> u64 {
 // getting market data from the blockchain (devnet)
 impl GetMarketAddress {
     pub async fn run(&self) -> anyhow::Result<()> {
-        let phoneix_config = get_pomm_config()?;
+        let phoneix_config = get_pomm_config().map_err(|e| Error::from(e.to_string()))?;
 
-        let (commitment, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
+        let (commitment, payer, rpc_enpoint) = phoneix_config
+            .read_global_config()
+            .map_err(|e| Error::from(e.to_string()))?;
 
         let client = EllipsisClient::from_rpc(
             RpcClient::new_with_commitment(rpc_enpoint, commitment),

@@ -1,3 +1,4 @@
+use crate::errors::Error;
 use crate::utils::get_pomm_config;
 use ellipsis_client::grpc_client::transaction_subscribe;
 use phoenix_sdk::sdk_client::SDKClient;
@@ -21,11 +22,15 @@ pub struct Grpc {
 
 impl Grpc {
     pub async fn run(&self) -> anyhow::Result<()> {
-        let phoneix_config = get_pomm_config()?;
+        let phoneix_config = get_pomm_config().map_err(|e| Error::from(e.to_string()))?;
 
-        let (_, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
+        let (_, payer, rpc_enpoint) = phoneix_config
+            .read_global_config()
+            .map_err(|e| Error::from(e.to_string()))?;
 
-        let sdk = SDKClient::new(&payer, &rpc_enpoint).await?;
+        let sdk = SDKClient::new(&payer, &rpc_enpoint)
+            .await
+            .map_err(|e| Error::from(e.to_string()))?;
 
         let (sender, mut receiver) = channel(10000);
 

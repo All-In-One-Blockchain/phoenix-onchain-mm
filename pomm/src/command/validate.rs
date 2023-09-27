@@ -1,5 +1,6 @@
 use crate::config::PhoenixOnChainMMConfig;
 use crate::config::Ticker;
+use crate::errors::Error;
 use crate::utils::get_pomm_config;
 use phoenix::program::accounts::MarketHeader;
 use solana_account_decoder::UiAccountEncoding;
@@ -20,21 +21,35 @@ pub struct Validate {}
 
 impl Validate {
     pub async fn run(&self) -> anyhow::Result<()> {
-        let phoneix_config = get_pomm_config()?;
+        let phoneix_config = get_pomm_config().map_err(|e| Error::from(e.to_string()))?;
 
-        let (commitment, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
+        let (commitment, payer, rpc_enpoint) = phoneix_config
+            .read_global_config()
+            .map_err(|e| Error::from(e.to_string()))?;
 
         let client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
 
-        let _sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint).await?;
+        let _sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint)
+            .await
+            .map_err(|e| Error::from(e.to_string()))?;
 
         let PhoenixOnChainMMConfig { market, ticker, .. } = phoneix_config.phoenix.clone();
 
-        let base_account = phoneix_config.phoenix.get_base_oracle_account()?;
-        let quote_account = phoneix_config.phoenix.get_quote_oracle_account()?;
+        let base_account = phoneix_config
+            .phoenix
+            .get_base_oracle_account()
+            .map_err(|e| Error::from(e.to_string()))?;
+        let quote_account = phoneix_config
+            .phoenix
+            .get_quote_oracle_account()
+            .map_err(|e| Error::from(e.to_string()))?;
 
-        check_market_address_by_ticker(market, &client, ticker).await?;
-        check_oracle_price_account(&client, base_account, quote_account).await?;
+        check_market_address_by_ticker(market, &client, ticker)
+            .await
+            .map_err(|e| Error::from(e.to_string()))?;
+        check_oracle_price_account(&client, base_account, quote_account)
+            .await
+            .map_err(|e| Error::from(e.to_string()))?;
 
         Ok(())
     }

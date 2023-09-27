@@ -93,12 +93,19 @@ impl Initialize {
 
         let transaction =
             Transaction::new_signed_with_payer(&[ix], Some(&payer.pubkey()), &[&payer], blockhash);
-        let txid = client.send_and_confirm_transaction(&transaction).await?;
+        match client.send_and_confirm_transaction(&transaction).await {
+            Ok(txid) => {
+                println!(
+                    "Creating strategy account: https://explorer.solana.com/tx/{}?cluster=devnet",
+                    txid
+                );
+            }
+            Err(e) => {
+                println!("Initialize Error: {:#?}", e);
+                return Ok(());
+            }
+        }
 
-        println!(
-            "Creating strategy account: https://explorer.solana.com/tx/{}?cluster=devnet",
-            txid
-        );
         Ok(())
     }
 }

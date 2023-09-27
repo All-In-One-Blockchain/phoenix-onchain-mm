@@ -1,3 +1,4 @@
+use crate::errors::Error;
 use crate::utils::get_pomm_config;
 use phoenix::program::MarketHeader;
 use solana_client::nonblocking::rpc_client::RpcClient;
@@ -17,9 +18,11 @@ pub struct ListenBalance {
 
 impl ListenBalance {
     pub async fn run(&self) -> anyhow::Result<()> {
-        let phoneix_config = get_pomm_config()?;
+        let phoneix_config = get_pomm_config().map_err(|e| Error::from(e.to_string()))?;
 
-        let (commitment, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
+        let (commitment, payer, rpc_enpoint) = phoneix_config
+            .read_global_config()
+            .map_err(|e| Error::from(e.to_string()))?;
 
         let client = RpcClient::new_with_commitment(rpc_enpoint.to_string(), commitment);
 

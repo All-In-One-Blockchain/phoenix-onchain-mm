@@ -1,4 +1,5 @@
 use crate::config::PhoenixOnChainMMConfig;
+use crate::errors::Error;
 use crate::utils::create_airdrop_spl_ixs;
 use crate::utils::get_pomm_config;
 use solana_sdk::signer::Signer;
@@ -9,11 +10,15 @@ pub struct AirdropBaseAndQuote {}
 
 impl AirdropBaseAndQuote {
     pub async fn run(&self) -> anyhow::Result<()> {
-        let phoneix_config = get_pomm_config()?;
+        let phoneix_config = get_pomm_config().map_err(|e| Error::from(e.to_string()))?;
 
-        let (_, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
+        let (_, payer, rpc_enpoint) = phoneix_config
+            .read_global_config()
+            .map_err(|e| Error::from(e.to_string()))?;
 
-        let sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint).await?;
+        let sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint)
+            .await
+            .map_err(|e| Error::from(e.to_string()))?;
 
         let PhoenixOnChainMMConfig { market, .. } = phoneix_config.phoenix;
 
@@ -36,7 +41,8 @@ impl AirdropBaseAndQuote {
         let setup_tx = sdk
             .client
             .sign_send_instructions(instructions, vec![])
-            .await?;
+            .await
+            .map_err(|e| Error::from(e.to_string()))?;
 
         println!(
             "Setup tx: https://explorer.solana.com/tx/{}?cluster=devnet",

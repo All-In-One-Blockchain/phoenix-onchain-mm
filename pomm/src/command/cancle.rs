@@ -1,3 +1,4 @@
+use crate::errors::Error;
 use crate::utils::get_pomm_config;
 use structopt::StructOpt;
 
@@ -6,11 +7,15 @@ pub struct Cancle {}
 
 impl Cancle {
     pub async fn run(&self) -> anyhow::Result<()> {
-        let phoneix_config = get_pomm_config()?;
+        let phoneix_config = get_pomm_config().map_err(|e| Error::from(e.to_string()))?;
 
-        let (_, payer, rpc_enpoint) = phoneix_config.read_global_config()?;
+        let (_, payer, rpc_enpoint) = phoneix_config
+            .read_global_config()
+            .map_err(|e| Error::from(e.to_string()))?;
 
-        let sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint).await?;
+        let sdk = phoenix_sdk::sdk_client::SDKClient::new(&payer, &rpc_enpoint)
+            .await
+            .map_err(|e| Error::from(e.to_string()))?;
 
         let (cancel_order_tx_sig, event) = sdk
             .send_cancel_all(&phoneix_config.phoenix.market)

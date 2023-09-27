@@ -1,5 +1,6 @@
 use crate::config::Config as PhoenixConfig;
 use crate::constant::DEFAULT_CONFIG_FILE;
+use crate::errors::Error;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
@@ -14,7 +15,8 @@ impl Auto {
     pub fn run(&self) -> anyhow::Result<PathBuf> {
         if let Some(config_path) = self.config_path.clone() {
             println!("enpter input config file");
-            let config_str = std::fs::read_to_string(config_path.clone())?;
+            let config_str = std::fs::read_to_string(config_path.clone())
+                .map_err(|e| Error::from(e.to_string()))?;
             assert!(toml::from_str::<PhoenixConfig>(&config_str).is_ok());
             Ok(config_path)
         } else {
@@ -28,7 +30,8 @@ impl Auto {
                 std::fs::create_dir_all(pomm_config_path.clone())?;
                 let config_path = pomm_config_path.join("config.toml");
                 std::fs::write(config_path.clone(), DEFAULT_CONFIG_FILE)?;
-                let config_str = std::fs::read_to_string(config_path.clone())?;
+                let config_str = std::fs::read_to_string(config_path.clone())
+                    .map_err(|e| Error::from(e.to_string()))?;
                 assert!(toml::from_str::<PhoenixConfig>(&config_str).is_ok());
                 Ok(config_path)
             }
