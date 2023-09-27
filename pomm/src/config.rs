@@ -78,33 +78,26 @@ pub struct PhoenixOnChainMMConfig {
 
 impl PhoenixOnChainMMConfig {
     pub fn get_base_oracle_account(&self) -> anyhow::Result<Pubkey> {
-        match self.ticker.base.as_str().to_lowercase().as_str() {
-            "sol" => Ok(ids::sol_oracle::id()),
-            "eth" => Ok(ids::eth_oracle::id()),
-            "bonk" => Ok(ids::bonk_oracle::id()),
-            "usdc" => Ok(ids::usdc_oracle::id()),
-            "msol" => Ok(ids::msol_oracle::id()),
-            "jitosol" => Ok(ids::jitosol_oracle::id()),
-            _ => Err(anyhow::anyhow!(
-                "Invalid base({}) currency for oracle account",
-                self.ticker.base
-            )),
-        }
+        get_oracle_account_by_name(self.ticker.base.as_str().to_lowercase().as_str())
     }
 
     pub fn get_quote_oracle_account(&self) -> anyhow::Result<Pubkey> {
-        match self.ticker.quote.as_str().to_lowercase().as_str() {
-            "sol" => Ok(ids::sol_oracle::id()),
-            "eth" => Ok(ids::eth_oracle::id()),
-            "bonk" => Ok(ids::bonk_oracle::id()),
-            "usdc" => Ok(ids::usdc_oracle::id()),
-            "msol" => Ok(ids::msol_oracle::id()),
-            "jitosol" => Ok(ids::jitosol_oracle::id()),
-            _ => Err(anyhow::anyhow!(
-                "Invalid base({}) currency for oracle account",
-                self.ticker.base
-            )),
-        }
+        get_oracle_account_by_name(self.ticker.quote.as_str().to_lowercase().as_str())
+    }
+}
+
+fn get_oracle_account_by_name(name: &str) -> anyhow::Result<Pubkey> {
+    match name {
+        "sol" => Ok(ids::sol_oracle::id()),
+        "eth" => Ok(ids::eth_oracle::id()),
+        "bonk" => Ok(ids::bonk_oracle::id()),
+        "usdc" => Ok(ids::usdc_oracle::id()),
+        "msol" => Ok(ids::msol_oracle::id()),
+        "jitosol" => Ok(ids::jitosol_oracle::id()),
+        _ => Err(anyhow::anyhow!(
+            "Invalid base({}) currency for oracle account",
+            name
+        )),
     }
 }
 
