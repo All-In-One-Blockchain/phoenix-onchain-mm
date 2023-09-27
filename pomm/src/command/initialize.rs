@@ -1,5 +1,6 @@
 use crate::config::PhoenixOnChainMMConfig;
 use crate::constant::{PHOENIX_ONCHAIN_MM_ORACLE_SEED, PHOENIX_ONCHAIN_MM_STRATEGY_SEED};
+use crate::ids;
 use crate::utils::get_pomm_config;
 use anchor_lang::InstructionData;
 use anchor_lang::ToAccountMetas;
@@ -43,7 +44,7 @@ impl Initialize {
                 payer.pubkey().as_ref(),
                 market.as_ref(),
             ],
-            &phoenix_onchain_mm::id(),
+            &ids::phoenix_onchain_mm_program::id(),
         );
 
         let (oracle_account, _) = Pubkey::find_program_address(
@@ -52,7 +53,7 @@ impl Initialize {
                 payer.pubkey().as_ref(),
                 market.as_ref(),
             ],
-            &phoenix_onchain_mm::id(),
+            &ids::phoenix_onchain_mm_program::id(),
         );
 
         let price_improvement = match price_improvement_behavior.as_str() {
@@ -83,7 +84,7 @@ impl Initialize {
         };
 
         let ix = Instruction {
-            program_id: phoenix_onchain_mm::id(),
+            program_id: ids::phoenix_onchain_mm_program::id(),
             accounts: initialize_accounts.to_account_metas(None),
             data: initialize_data.data(),
         };
