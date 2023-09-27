@@ -16,13 +16,15 @@
 
 1. generate default config
     - `pomm auto` this will generate default config.toml file to `~/.config/pomm/config.toml`, you can modify it. to change market and base and quote coin account, for you interest market.
-2. airdrop base and quote coin
+2. validate generate config
+    - `pomm validate`
+3. airdrop base and quote coin
     - `pomm airdrop`
-3. init phoenix market
+4. init phoenix market
     - `pomm init`
-4. update quotes
+5. update quotes
     - `pomm update-quotes`
-5. listen balance
+6. listen balance
     - `pomm listen-balance`
 
 Below this is pomm command support.
@@ -30,7 +32,7 @@ Below this is pomm command support.
 ## Pomm usage
 
 ```bash
-pomm 0.1.1
+pomm 0.1.6
 
 USAGE:
     pomm <SUBCOMMAND>
@@ -52,6 +54,7 @@ SUBCOMMANDS:
     list-all-market          list all market
     listen-balance           listen balance
     update-quotes            update quotes
+    validate                 validate config
     view-state-order-book    view state order book
 ```
 
@@ -67,17 +70,7 @@ commitment = "confirmed"
 
 [phoenix]
 # this is phoneix market address
-market = "CS2H8nbAVVEUHWPF5extCSymqheQdkd4d7thik6eet9N" # you can change it to your interest market
-# devnet: https://pyth.network/developers/price-feed-ids#solana-devnet
-# mainnet: https://pyth.network/developers/price-feed-ids#solana-mainnet-beta
-# Crypto.SOL/USD J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix
-# base account is oracle account in pyth
-base_account = "J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix" # you can change it to your interest market
-# devnet: https://pyth.network/developers/price-feed-ids#solana-devnet
-# mainnet: https://pyth.network/developers/price-feed-ids#solana-mainnet-beta
-# Crypto.USDC/USD 5SSkXsEKQepHHAewytPVwdej4epN1nxgLVM84L4KXgy7
-# quote account is oracle account in pyth
-quote_account = "5SSkXsEKQepHHAewytPVwdej4epN1nxgLVM84L4KXgy7" # you can change it to your interest market
+market = "CS2H8nbAVVEUHWPF5extCSymqheQdkd4d7thik6eet9N" # you can change it to you interest market
 ticker = "SOL/USDC" # you interest market
 ## Below is you Maket Maker Strategy Param
 quote_refresh_frequency_in_ms = 2000
